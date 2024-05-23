@@ -25,8 +25,12 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email',
+        'role',
+        'address',
+        'phone',
         'password',
+        'current_balance',
+        'cut_off_percent',
     ];
 
     /**
@@ -41,14 +45,6 @@ class User extends Authenticatable
         'two_factor_secret',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
 
     /**
      * The accessors to append to the model's array form.
@@ -58,4 +54,14 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function agent()
+    {
+        return $this->hasOne(Agent::class);
+    }
+
+    public function branches()
+    {
+        return $this->hasMany(Branch::class);
+    }
 }

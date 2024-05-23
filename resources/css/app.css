@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@import 'flowbite';
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* Your custom styles can go here */
+
+
 [x-cloak] {
     display: none;
 }
