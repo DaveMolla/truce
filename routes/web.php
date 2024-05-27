@@ -4,6 +4,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AgentController;
+use App\Http\Controllers\BingoCardController;
 use App\Http\Controllers\BranchController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('admin/top-up-branch', [AdminController::class, 'topUpBranch'])->name('admin.top-up-branch');
     Route::post('admin/withdraw-branch', [AdminController::class, 'withdrawBranch'])->name('admin.withdraw-branch');
     Route::post('admin/assign-branch', [AdminController::class, 'assignBranch'])->name('admin.assign-branch');
+
+    Route::get('bingo-cards/import', [BingoCardController::class, 'showImportForm'])->name('bingo-cards.import-form');
+    Route::post('bingo-cards/import', [BingoCardController::class, 'import'])->name('bingo-cards.import');
 });
 
 // Agent routes
@@ -43,8 +47,8 @@ Route::post('branch/login', [BranchController::class, 'login']);
 Route::post('branch/logout', [BranchController::class, 'logout'])->name('branch.logout');
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     Route::get('branch/dashboard', [BranchController::class, 'dashboard'])->name('branch.dashboard');
+    Route::get('branch/boards', [BranchController::class, 'cards'])->name('branch.cards');
     Route::get('branch/history', [BranchController::class, 'history'])->name('branch.history');
-    Route::post('branch/create-game', [BranchController::class, 'createGame'])->name('branch.create-game');
-    Route::get('branch/game-page', [BranchController::class, 'showGamePage'])->name('branch.game-page');
-
+    Route::post('branch/game-page', [BranchController::class, 'createGame'])->name('branch.game-page');
+    Route::get('branch/game/{game}', [BranchController::class, 'gamePage']);
 });

@@ -4,6 +4,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BingoCard;
+use App\Models\Branch;
 use App\Models\Game;
 use App\Models\WinningPattern;
 use Illuminate\Http\Request;
@@ -78,42 +80,142 @@ class BranchController extends Controller
      */
     public function dashboard()
     {
+        $bingoCards = BingoCard::all();
         $winningPatterns = WinningPattern::all();
-
-        return view('branch.dashboard', compact('winningPatterns'));
+        return view('branch.dashboard', compact('bingoCards', 'winningPatterns'));
     }
-    public function history()
+    public function history(Request $request)
     {
         // $recentGames = Game::latest()->paginate(10);
+        $branchUser = Auth::user();
 
-        return view('branch.history');
+        $branch_user = Branch::where('user_id', Auth::user()->id)->first();
+        // $branches = Branch::where('agent_id', $agent->id)->get();
+        $recentGames = Game::where('branch_user_id', $branch_user->id)->latest()->paginate(10);
+
+        // Assuming you have a relationship between branch user and games
+        $totalGames = Game::where('branch_user_id', $branchUser->id)->count();
+
+        // Assuming the wallet balance is stored in a field on the branch user
+        // $walletBalance = $branchUser->wallet_balance;
+        // $branch = User::find($request->branch_id);
+        $branch = Branch::where('user_id', $branchUser->id)->first();
+        $walletBalance = $branchUser->current_balance ? $branch->user->current_balance : 0;
+        return view('branch.history', compact('totalGames', 'walletBalance', 'branchUser', 'recentGames'));
     }
+
+    // public function createGame(Request $request)
+    // {
+    //     $request->validate([
+    //         'bet_amount' => 'required|integer|min:1',
+    //         'number_of_selected_numbers' => 'required|integer|min:1',
+    //         'selected_numbers' => 'required|string',
+    //         'winning_pattern' => 'required|exists:winning_patterns,id',
+    //     ]);
+
+    //     $totalBetAmount = $request->bet_amount * $request->number_of_selected_numbers;
+
+    //     Game::create([
+    //         'bet_amount' => $request->bet_amount,
+    //         'total_players' => $request->number_of_selected_numbers,
+    //         'total_calls' => 0, // Assuming this starts at 0
+    //         'status' => 'pending',
+    //         'total_bet_amount' => $totalBetAmount,
+    //         'profit' => 0, // Assuming profit calculation is done elsewhere
+    //     ]);
+
+    //     return redirect()->route('branch.game-page')->with('success', 'Game created successfully!');
+    // }
+
+    // public function createGame(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'bet_amount' => 'required|numeric',
+    //         'selected_numbers' => 'required|string',
+    //         'winning_pattern' => 'required|integer',
+    //     ]);
+
+    //     $selectedNumbers = explode(',', $validated['selected_numbers']);
+    //     $numberOfSelectedNumbers = count($selectedNumbers);
+    //     $totalAmount = $validated['bet_amount'] * $numberOfSelectedNumbers;
+
+    //     // Create the game record in the database
+    //     $game = Game::create([
+    //         'bet_amount' => $validated['bet_amount'],
+    //         'total_players' => $numberOfSelectedNumbers,
+    //         'total_calls' => 0,
+    //         'status' => 'pending',
+    //         'total_bet_amount' => $totalAmount,
+    //         'profit' => 0,
+    //     ]);
+
+    //     // Optionally, associate selected cards with the game
+    //     // ...
+
+    //     return redirect()->route('branch.show-game-page');
+    // }
 
     public function createGame(Request $request)
     {
-        $request->validate([
-            'bet_amount' => 'required|integer|min:1',
-            'number_of_selected_numbers' => 'required|integer|min:1',
-            'selected_numbers' => 'required|string',
-            'winning_pattern' => 'required|exists:winning_patterns,id',
-        ]);
 
-        $totalBetAmount = $request->bet_amount * $request->number_of_selected_numbers;
+        $games = Game::all();
 
-        Game::create([
+        $selectedNumbers = explode(',', $request->input('selected_numbers'));
+
+        $branch_user = User::where('role','branch', Auth::user()->id)->first();
+        // dd($branch_user);
+        // $branch_user = Branch::
+        // $cutOffPercent = $branch_user->cut_off_percent ?? 0;
+        $user = Auth::user();
+        $cutOffPercent = $user->cut_off_percent ?? 0;
+        $totalBetAmount = $request->bet_amount * count($selectedNumbers);
+
+        $profit = ($cutOffPercent / 100) * $totalBetAmount;
+
+        $game = Game::create([
+            'branch_user_id' => $branch_user->id,
             'bet_amount' => $request->bet_amount,
-            'total_players' => $request->number_of_selected_numbers,
-            'total_calls' => 0, // Assuming this starts at 0
+            'total_players' => count($selectedNumbers),
+            'total_calls' => 0,
             'status' => 'pending',
             'total_bet_amount' => $totalBetAmount,
-            'profit' => 0, // Assuming profit calculation is done elsewhere
+            'profit' => $profit,
         ]);
 
-        return redirect()->route('branch.game-page')->with('success', 'Game created successfully!');
+        // Associate selected cards with the game
+        // $game->bingoCards()->attach($request->input('selected_numbers'));
+
+        return view('branch.game-page', ['game' => $game->id]);
     }
 
-    public function showGamePage()
+
+
+    public function gamePage($gameId)
+{
+    $game = Game::with(['bingoCards', 'calledNumbers'])->findOrFail($gameId);
+    $previousCall = $game->calledNumbers->last();
+
+    return view('branch.game-page', [
+        'game' => $game,
+        'previousCall' => $previousCall
+    ]);
+}
+
+    // public function showGamePage()
+    // {
+    //     return view('branch.game-page');
+    // }
+    // public function gamePage(Request $request)
+    // {
+    //     $game = Game::findOrFail($request->game);
+
+    //     return view('branch.game-page', compact('game'));
+    // }
+
+    public function cards()
     {
-        return view('branch.game-page');
+        $bingoCards = BingoCard::all();
+
+        return view('branch.cards', compact('bingoCards'));
     }
 }

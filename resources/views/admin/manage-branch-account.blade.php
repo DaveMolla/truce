@@ -82,10 +82,10 @@
                 <tbody>
                     @foreach ($branches as $branch)
                         <tr>
-                            <td>{{ $branch->name }}</td>
-                            <td>{{ $branch->address }}</td>
-                            <td>{{ $branch->phone }}</td>
-                            <td>{{ $branch->current_balance ?? 0 }}</td>
+                            <td>{{ $branch->user->name }}</td>
+                            <td>{{ $branch->user->address }}</td>
+                            <td>{{ $branch->user->phone }}</td>
+                            <td>{{ $branch->user->current_balance ?? 0 }}</td>
                             <td>
                                 <button data-modal-target="topup-modal" data-modal-toggle="topup-modal" class="text-blue-500 hover:text-blue-700" onclick="setTopupModalData('{{ $branch->id }}', '{{ $branch->name }}', '{{ $branch->current_balance ?? 0 }}')">Top-up</button>
                             </td>
@@ -240,7 +240,7 @@
                             <label for="agentId" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Agent</label>
                             <select name="agent_id" id="agentId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                                 @foreach ($agents as $agent)
-                                    <option value="{{ $agent->id }}">{{ $agent->name }}</option>
+                                    <option value="{{ $agent->id }}">{{ $agent->user->name }}</option>
                                 @endforeach
                             </select>
                         </div>

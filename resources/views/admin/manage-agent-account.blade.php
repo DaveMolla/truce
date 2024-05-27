@@ -68,10 +68,10 @@
                 <tbody>
                     @foreach ($agents as $agent)
                         <tr>
-                            <td>{{ $agent->name }}</td>
-                            <td>{{ $agent->address }}</td>
-                            <td>{{ $agent->phone }}</td>
-                            <td>{{ $agent->current_balance ?? 0 }}</td>
+                            <td>{{ $agent->user->name }}</td>
+                            <td>{{ $agent->user->address }}</td>
+                            <td>{{ $agent->user->phone }}</td>
+                            <td>{{ $agent->user->current_balance ?? 0 }}</td>
                             <td>
                                 <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" class="text-blue-500 hover:text-blue-700" onclick="setModalData('{{ $agent->id }}', '{{ $agent->name }}', '{{ $agent->current_balance ?? 0 }}')">Top-up</button>
                             </td>

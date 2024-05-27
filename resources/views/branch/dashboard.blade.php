@@ -1,12 +1,10 @@
-<!-- resources/views/branch/create-game.blade.php -->
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Branch Dashboard | NexusBingo</title>
+    <title>Branch Dashboard | TruceBingo</title>
     @vite('resources/css/app.css')
     <style>
         .number-grid {
@@ -23,6 +21,7 @@
             border-radius: 0.375rem;
             padding: 0.5rem;
             transition: background-color 0.3s;
+            margin: 2px;
         }
 
         .number-grid button.selected {
@@ -37,7 +36,7 @@
             background-color: #ffffff;
             padding: 0.5rem;
             border-radius: 0.375rem;
-            margin-right: 800px;
+            margin-right: 100px;
             margin-top: -500px;
         }
 
@@ -69,7 +68,23 @@
 <body class="bg-gray-800">
 
     <div class="min-h-screen flex items-center justify-center">
-
+        <div class="bg-gray-500 w-64 p-4">
+            <h1 class="text-3xl font-bold mb-6">Truce Bingo</h1>
+            <nav>
+                <ul>
+                    <li class="mb-4">
+                        <a href="{{ route('branch.history') }}"
+                            class="block px-4 py-2 text-sm text-black hover:bg-gray-400">Transaction History</a>
+                    </li>
+                    <li class="mb-4">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="text-lg hover:text-gray-400">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+        </div>
         <!-- Main content -->
         <div class="p-10 w-full max-w-6xl mx-auto">
             <div class="grid grid-cols-12 gap-4">
@@ -125,10 +140,11 @@
                         </div>
 
                         <div class="number-grid mb-5">
-                            @for ($i = 1; $i <= 90; $i++)
-                                <button type="button" class="number-button"
-                                    data-number="{{ $i }}">{{ $i }}</button>
-                            @endfor
+                            @foreach ($bingoCards as $card)
+                                <button type="button" class="number-button" data-card-id="{{ $card->id }}">
+                                    {{ $card->id }}
+                                </button>
+                            @endforeach
                         </div>
 
                         <input type="hidden" name="selected_numbers" id="selected_numbers">
@@ -149,48 +165,45 @@
         <div class="pattern-grid" id="pattern_grid">
             <!-- The pattern grid will be generated here -->
         </div>
-        <div class="bg-gray-500 w-64 p-4">
-            <h1 class="text-3xl font-bold mb-6">Truce Bingo</h1>
-            <nav>
-                <ul>
-                    <li class="mb-4">
-                        <a href="{{ route('branch.history') }}" class="text-lg hover:text-gray-400">Transaction History</a>
-                    </li>
-                    <li class="mb-4">
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="text-lg hover:text-gray-400">Logout</button>
-                        </form>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+
     </div>
 
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const numberButtons = document.querySelectorAll('.number-button');
+            const betAmountInput = document.getElementById('bet_amount');
             const selectedNumbersInput = document.getElementById('selected_numbers');
             const numberOfSelectedNumbersInput = document.getElementById('number_of_selected_numbers');
             const winningPatternSelect = document.getElementById('winning_pattern');
+            const totalAmountInput = document.getElementById('total_amount');
             const patternGrid = document.getElementById('pattern_grid');
             let selectedNumbers = [];
 
+            function updateTotalAmount() {
+                const betAmount = parseFloat(betAmountInput.value) || 0;
+                const numberOfSelected = selectedNumbers.length;
+                const totalAmount = betAmount * numberOfSelected;
+                totalAmountInput.value = totalAmount; // Update the hidden input
+            }
+
             numberButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    const number = this.dataset.number;
-                    if (selectedNumbers.includes(number)) {
-                        selectedNumbers = selectedNumbers.filter(n => n !== number);
+                    const cardId = this.dataset.cardId;
+                    if (selectedNumbers.includes(cardId)) {
+                        selectedNumbers = selectedNumbers.filter(n => n !== cardId);
                         this.classList.remove('selected');
                     } else {
-                        selectedNumbers.push(number);
+                        selectedNumbers.push(cardId);
                         this.classList.add('selected');
                     }
                     selectedNumbersInput.value = selectedNumbers.join(',');
                     numberOfSelectedNumbersInput.value = selectedNumbers.length;
+                    updateTotalAmount(); // Update total amount whenever selection changes
                 });
             });
+
+            betAmountInput.addEventListener('input', updateTotalAmount);
 
             winningPatternSelect.addEventListener('change', function() {
                 const selectedOption = this.options[this.selectedIndex];
@@ -218,6 +231,8 @@
 
             // Trigger change event to load the default pattern on page load
             winningPatternSelect.dispatchEvent(new Event('change'));
+            updateTotalAmount(); // Update total amount on page load
+
         });
     </script>
     @vite('resources/js/app.js')

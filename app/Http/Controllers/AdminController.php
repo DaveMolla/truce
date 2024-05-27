@@ -123,8 +123,8 @@ class AdminController extends Controller
 
     public function manageBranchAccount()
     {
-        $agents = User::where('role', 'agent')->get();
-        $branches = User::where('role', 'branch')->get();
+        $agents = Agent::all();
+        $branches = Branch::all();
         return view('admin.manage-branch-account', compact('branches', 'agents'));
     }
 
@@ -186,14 +186,18 @@ class AdminController extends Controller
 
     public function assignBranch(Request $request)
     {
+        // dd($request->all());
+
         $request->validate([
-            'branch_id' => 'required|exists:branches,id',
-            'agent_id' => 'required|exists:agents,id',
+            'branch_id' => 'required',
+            'agent_id' => 'required',
         ]);
 
         $branch = Branch::find($request->branch_id);
-        $branch->agent_id = $request->agent_id;
-        $branch->save();
+
+        $branch->update([
+            'agent_id'=> $request->agent_id,
+        ]);
 
         return redirect()->back()->with('success', 'Branch assigned to agent successfully!');
     }

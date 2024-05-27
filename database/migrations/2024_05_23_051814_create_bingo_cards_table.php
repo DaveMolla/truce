@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('games', function (Blueprint $table) {
+        Schema::create('bingo_cards', function (Blueprint $table) {
             $table->id();
-            $table->string('bet_amount');
-            $table->string('total_players')->default(0);
-            $table->string('total_calls')->default(0);
-            $table->string('status')->default('pending');
-            $table->string('total_bet_amount')->default(0);
-            $table->string('profit')->default(0);
+            $table->json('card_data');
             $table->timestamps();
         });
     }
@@ -28,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('games');
+        Schema::dropIfExists('bingo_cards');
     }
 };

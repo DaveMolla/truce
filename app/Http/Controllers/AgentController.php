@@ -4,6 +4,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Agent;
 use App\Models\Branch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,7 +78,8 @@ class AgentController extends Controller
      */
     public function dashboard()
     {
-        $branches = Branch::where('agent_id', Auth::user()->id)->get();
+        $agent = Agent::where('user_id',Auth::user()->id)->first();
+        $branches = Branch::where('agent_id', $agent->id)->get();
 
         return view('agent.dashboard', compact('branches'));
     }
