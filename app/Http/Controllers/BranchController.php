@@ -117,15 +117,19 @@ class BranchController extends Controller
     {
         // $recentGames = Game::latest()->paginate(10);
         $branchUser = Auth::user();
+        // $games = Game::where('branch_user_id', $branchUser->id)->first();
 
-        $branch_user = Branch::where('user_id', Auth::user()->id)->first();
+        // $branch_user = Branch::where('user_id', Auth::user()->id)->first();
         // $branches = Branch::where('agent_id', $agent->id)->get();
-        $recentGames = Game::where('branch_user_id', $branch_user->id)->latest()->paginate(10);
+        // dd($games);
+        $recentGames = Game::where('branch_user_id', $branchUser->id)->latest()->paginate(10);
 
         $totalGames = Game::where('branch_user_id', $branchUser->id)->count();
 
         $branch = Branch::where('user_id', $branchUser->id)->first();
-        $walletBalance = $branchUser->current_balance ? $branch->user->current_balance : 0;
+
+        $walletBalance = $branchUser->current_balance ? $branchUser->current_balance : 0;
+
         return view('branch.history', compact('totalGames', 'walletBalance', 'branchUser', 'recentGames'));
     }
 

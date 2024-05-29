@@ -12,6 +12,7 @@ Route::get('/', function () {
     return view('branch.login');
 });
 
+// Route::get('/', function () {
 // Admin routes
 Route::get('admin/login', [AdminController::class, 'index'])->name('admin.login');
 Route::post('admin/login', [AdminController::class, 'login']);
