@@ -39,12 +39,13 @@
                 </div>
             </div>
 
-            <ul class="list-disc pl-5">
+            {{-- <ul class="list-disc pl-5">
                 <li class="mb-2">List Of Branches that has less than 10k in the wallet.</li>
                 <li class="mb-2">List of Branches that haven’t been active for the past 7 days.</li>
                 <li class="mb-2">Overall profits that the branches make within the 24 hrs.</li>
                 <li>Etc...</li>
-            </ul>
+            </ul> --}}
+            <h2 class="text-center">Welocme to admin dashboard</h2>
         </div>
     </div>
 

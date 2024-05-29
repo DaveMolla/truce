@@ -60,6 +60,7 @@
             <table class="min-w-full bg-gray-800 rounded-lg">
                 <thead>
                     <tr>
+                        <th class="px-4 py-2">No</th>
                         <th class="px-4 py-2">Name</th>
                         <th class="px-4 py-2">City</th>
                         <th class="px-4 py-2">Phone Number</th>
@@ -69,8 +70,12 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $rowNumber = 1;
+                    @endphp
                     @foreach ($branches as $branch)
                         <tr>
+                            <td class="border px-4 py-2">{{ $rowNumber++ }}</td>
                             <td class="border px-4 py-2">{{ $branch->user->name }}</td>
                             <td class="border px-4 py-2">{{ $branch->user->address }}</td>
                             <td class="border px-4 py-2">{{ $branch->user->phone }}</td>
@@ -88,6 +93,9 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="mt-4">
+                {{ $branches->links() }}
+            </div>
         </div>
     </div>
 

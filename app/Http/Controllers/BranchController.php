@@ -25,6 +25,35 @@ class BranchController extends Controller
         return view('branch.login');
     }
 
+    public function register()
+    {
+        return view('branch.register');
+    }
+
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|max:255',
+            'phone' => 'required|unique:users,phone',
+            'address' => 'required',
+            'password' => 'required|min:6',
+        ]);
+
+        $branchUser = User::create([
+            'name' => $validatedData['name'],
+            'phone' => $validatedData['phone'],
+            'address' => $validatedData['address'],
+            'password' => bcrypt($validatedData['password']),
+            'role' => $validatedData['role'] ?? 'branch',
+        ]);
+
+        $branch = Branch::create([
+            'user_id' => $branchUser->id,
+        ]);
+
+        return redirect()->route('admin.manage-branch-account')->with('success', 'branch registered successfully!');
+    }
+
     /**
      * Handle a branch login request.
      *
@@ -93,12 +122,8 @@ class BranchController extends Controller
         // $branches = Branch::where('agent_id', $agent->id)->get();
         $recentGames = Game::where('branch_user_id', $branch_user->id)->latest()->paginate(10);
 
-        // Assuming you have a relationship between branch user and games
         $totalGames = Game::where('branch_user_id', $branchUser->id)->count();
 
-        // Assuming the wallet balance is stored in a field on the branch user
-        // $walletBalance = $branchUser->wallet_balance;
-        // $branch = User::find($request->branch_id);
         $branch = Branch::where('user_id', $branchUser->id)->first();
         $walletBalance = $branchUser->current_balance ? $branch->user->current_balance : 0;
         return view('branch.history', compact('totalGames', 'walletBalance', 'branchUser', 'recentGames'));
@@ -162,7 +187,7 @@ class BranchController extends Controller
 
         $selectedNumbers = explode(',', $request->input('selected_numbers'));
 
-        $branch_user = User::where('role','branch', Auth::user()->id)->first();
+        $branch_user = User::where('role', 'branch', Auth::user()->id)->first();
         // dd($branch_user);
         // $branch_user = Branch::
         // $cutOffPercent = $branch_user->cut_off_percent ?? 0;
@@ -191,15 +216,15 @@ class BranchController extends Controller
 
 
     public function gamePage($gameId)
-{
-    $game = Game::with(['bingoCards', 'calledNumbers'])->findOrFail($gameId);
-    $previousCall = $game->calledNumbers->last();
+    {
+        $game = Game::with(['bingoCards', 'calledNumbers'])->findOrFail($gameId);
+        $previousCall = $game->calledNumbers->last();
 
-    return view('branch.game-page', [
-        'game' => $game,
-        'previousCall' => $previousCall
-    ]);
-}
+        return view('branch.game-page', [
+            'game' => $game,
+            'previousCall' => $previousCall
+        ]);
+    }
 
     // public function showGamePage()
     // {

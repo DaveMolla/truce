@@ -78,10 +78,41 @@ class AgentController extends Controller
      */
     public function dashboard()
     {
-        $agent = Agent::where('user_id',Auth::user()->id)->first();
-        $branches = Branch::where('agent_id', $agent->id)->get();
+        $agent = Agent::where('user_id', Auth::user()->id)->first();
+        $branches = Branch::where('agent_id', $agent->id)->orderBy('created_at', 'desc')->paginate(1);
 
         return view('agent.dashboard', compact('branches'));
+    }
+
+    public function register()
+    {
+        return view('agent.register');
+    }
+
+    public function store(Request $request)
+    {
+        // Validation and logic to store the agent
+        $validatedData = $request->validate([
+            'name' => 'required|max:255',
+            'phone' => 'required|unique:users,phone',
+            'address' => 'required',
+            'password' => 'required|min:6',
+        ]);
+
+        // Create the agent
+        $agentUser = User::create([
+            'name' => $validatedData['name'],
+            'phone' => $validatedData['phone'],
+            'address' => $validatedData['address'],
+            'password' => bcrypt($validatedData['password']),
+            'role' => $validatedData['role'] ?? 'agent',
+        ]);
+
+        $agent = Agent::create([
+            'user_id' => $agentUser->id,
+        ]);
+
+        return redirect()->route('admin.manage-agent-account')->with('success', 'Agent registered successfully!');
     }
 
     // public function branches()

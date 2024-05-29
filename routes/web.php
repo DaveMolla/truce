@@ -28,6 +28,17 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::get('bingo-cards/import', [BingoCardController::class, 'showImportForm'])->name('bingo-cards.import-form');
     Route::post('bingo-cards/import', [BingoCardController::class, 'import'])->name('bingo-cards.import');
+    Route::get('agent/register', [AgentController::class, 'register'])->name('agent.register');
+    Route::post('agent/store', [AgentController::class, 'store'])->name('agent.store');
+
+    Route::get('branch/register', [BranchController::class, 'register'])->name('branch.register');
+    Route::post('branch/store', [BranchController::class, 'store'])->name('branch.store');
+
+    Route::post('admin/update-agent-password', [AdminController::class, 'updateAgentPassword'])->name('admin.update-agent-password');
+    Route::post('admin/update-branch-password', [AdminController::class, 'updateBranchPassword'])->name('admin.update-branch-password');
+    Route::post('admin/set-cutoff', [AdminController::class, 'setCutoff'])->name('admin.set-cutoff');
+
+
 });
 
 // Agent routes
