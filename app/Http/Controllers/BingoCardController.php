@@ -21,6 +21,6 @@ class BingoCardController extends Controller
 
         Excel::import(new BingoCardsImport, $request->file('file'));
 
-        return redirect()->route('admin.dashboard')->with('success', 'Bingo cards imported successfully!');
+        return redirect()->route('admin.cards')->with('success', 'Bingo cards imported successfully!');
     }
 }

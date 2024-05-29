@@ -5,6 +5,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agent;
+use App\Models\BingoCard;
 use App\Models\Branch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -257,6 +258,13 @@ class AdminController extends Controller
         ]);
         // dd($request->cut_off_percent);
         return redirect()->back()->with('success', 'Cutoff percent set successfully!');
+    }
+
+    public function cards()
+    {
+        $bingoCards = BingoCard::all();
+
+        return view('admin.cards', compact('bingoCards'));
     }
 
 

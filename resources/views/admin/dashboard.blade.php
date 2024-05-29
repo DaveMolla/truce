@@ -26,6 +26,9 @@
                     <li class="mb-4">
                         <a href="{{ route('bingo-cards.import-form') }}" class="text-lg hover:text-gray-400">Import Bingo Cards</a>
                     </li>
+                    <li class="mb-4">
+                        <a href="{{ route('admin.cards') }}" class="text-lg hover:text-gray-400">Boards</a>
+                    </li>
                 </ul>
             </nav>
         </div>

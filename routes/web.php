@@ -38,6 +38,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('admin/update-branch-password', [AdminController::class, 'updateBranchPassword'])->name('admin.update-branch-password');
     Route::post('admin/set-cutoff', [AdminController::class, 'setCutoff'])->name('admin.set-cutoff');
 
+    Route::get('admin/boards', [AdminController::class, 'cards'])->name('admin.cards');
+
+
 
 });
 
