@@ -30,6 +30,10 @@
                             class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Boards</a>
                     </li>
                     <li class="mb-4">
+                        <a href="{{ route('branch.report') }}"
+                            class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Report</a>
+                    </li>
+                    <li class="mb-4">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="text-lg hover:text-gray-400">Logout</button>
@@ -52,7 +56,7 @@
                 </div>
                 <div class="bg-gray-800 p-4 rounded-lg text-center">
                     <h3 class="text-lg font-semibold">Wallet</h3>
-                    {{-- <p class="text-2xl mt-2">{{ $walletBalance }}</p> --}}
+                    <p class="text-2xl mt-2">{{ $walletBalance }}</p>
                 </div>
             </div>
 
@@ -60,6 +64,7 @@
             <table class="min-w-full bg-gray-800 rounded-lg">
                 <thead>
                     <tr>
+                        <th>No</th>
                         <th class="px-4 py-2">Date</th>
                         <th class="px-4 py-2">Bet amount</th>
                         <th class="px-4 py-2">Total Players</th>
@@ -70,22 +75,26 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $rowNumber = 1;
+                    @endphp
                     @foreach ($recentGames as $game)
-                    <tr>
-                        <td class="border px-4 py-2">{{ $game->created_at->format('l, F j, Y g:i A') }}</td>
-                        <td class="border px-4 py-2">{{ $game->bet_amount }}</td>
-                        <td class="border px-4 py-2">{{ $game->total_players }}</td>
-                        <td class="border px-4 py-2">{{ $game->total_calls }}</td>
-                        <td class="border px-4 py-2">{{ $game->status }}</td>
-                        <td class="border px-4 py-2">{{ $game->total_bet_amount }}</td>
-                        <td class="border px-4 py-2">{{ $game->profit }}</td>
-                    </tr>
+                        <tr>
+                            <td class="border px-4 py-2">{{ $rowNumber++ }}</td>
+                            <td class="border px-4 py-2">{{ $game->created_at->format('l, F j, Y g:i A') }}</td>
+                            <td class="border px-4 py-2">{{ $game->bet_amount }}</td>
+                            <td class="border px-4 py-2">{{ $game->total_players }}</td>
+                            <td class="border px-4 py-2">{{ $game->total_calls }}</td>
+                            <td class="border px-4 py-2">{{ $game->status }}</td>
+                            <td class="border px-4 py-2">{{ $game->total_bet_amount }}</td>
+                            <td class="border px-4 py-2">{{ $game->profit }}</td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
-            {{-- <div class="mt-4 flex justify-center">
-            {{ $recentGames->links() }}
-        </div> --}}
+            <div class="mt-4 flex justify-center">
+                {{ $recentGames->links() }}
+            </div>
         </div>
     </div>
 
