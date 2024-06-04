@@ -5,6 +5,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\BingoCardController;
+use App\Http\Controllers\BingoController;
 use App\Http\Controllers\BranchController;
 use Illuminate\Support\Facades\Route;
 
@@ -66,4 +67,14 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('branch/history', [BranchController::class, 'history'])->name('branch.history');
     Route::post('branch/game-page', [BranchController::class, 'createGame'])->name('branch.game-page');
     Route::get('branch/game/{game}', [BranchController::class, 'gamePage']);
+
+
+    Route::get('branch/report', [BranchController::class, 'showReport'])->name('branch.report');
+    Route::post('branch/check', [BingoController::class, 'checkBoard'])->name('bingo.check');
+
+
+    Route::get('/bingo', [BingoController::class,'index'])->name('bingo.index');
+    Route::post('/bingo/call', [BingoController::class,'callNextNumber'])->name('bingo.call');
+    Route::post('/bingo/reset', [BingoController::class,'resetBoard'])->name('bingo.reset');
+
 });

@@ -60,6 +60,9 @@
             <nav>
                 <ul>
                     <li class="mb-4">
+                        <h2 class="text-3xl font-bold mb-6">{{ $branchUser->name }}</h2>
+                    </li>
+                    <li class="mb-4">
                         <a href="{{ route('branch.dashboard') }}"
                             class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Dashboard</a>
                     </li>
@@ -68,7 +71,12 @@
                             class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Boards</a>
                     </li>
                     <li class="mb-4">
-                        <a href="{{ route('branch.history') }}" class="block px-4 py-2 text-sm text-black hover:bg-gray-400">Transaction History</a>
+                        <a href="{{ route('branch.report') }}"
+                            class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Report</a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="{{ route('branch.history') }}"
+                            class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Transaction History</a>
                     </li>
                     <li class="mb-4">
                         <form method="POST" action="{{ route('logout') }}">

@@ -8,10 +8,13 @@ use App\Models\BingoCard;
 use App\Models\Branch;
 use App\Models\Game;
 use App\Models\WinningPattern;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Session;
+
 
 class BranchController extends Controller
 {
@@ -184,23 +187,51 @@ class BranchController extends Controller
     //     return redirect()->route('branch.show-game-page');
     // }
 
+    // public function createGame(Request $request)
+    // {
+
+    //     $games = Game::all();
+
+    //     $selectedNumbers = explode(',', $request->input('selected_numbers'));
+
+    //     $branch_user = User::where('role', 'branch', Auth::user()->id)->first();
+    //     // dd($branch_user);
+    //     // $branch_user = Branch::
+    //     // $cutOffPercent = $branch_user->cut_off_percent ?? 0;
+    //     $user = Auth::user();
+    //     $cutOffPercent = $user->cut_off_percent ?? 0;
+    //     $totalBetAmount = $request->bet_amount * count($selectedNumbers);
+
+    //     $profit = ($cutOffPercent / 100) * $totalBetAmount;
+
+    //     $game = Game::create([
+    //         'branch_user_id' => $branch_user->id,
+    //         'bet_amount' => $request->bet_amount,
+    //         'total_players' => count($selectedNumbers),
+    //         'total_calls' => 0,
+    //         'status' => 'pending',
+    //         'total_bet_amount' => $totalBetAmount,
+    //         'profit' => $profit,
+    //     ]);
+
+    //     // Associate selected cards with the game
+    //     // $game->bingoCards()->attach($request->input('selected_numbers'));
+
+    //     return view('branch.game-page', ['game' => $game->id]);
+    // }
     public function createGame(Request $request)
     {
-
-        $games = Game::all();
-
         $selectedNumbers = explode(',', $request->input('selected_numbers'));
 
         $branch_user = User::where('role', 'branch', Auth::user()->id)->first();
-        // dd($branch_user);
-        // $branch_user = Branch::
-        // $cutOffPercent = $branch_user->cut_off_percent ?? 0;
         $user = Auth::user();
         $cutOffPercent = $user->cut_off_percent ?? 0;
         $totalBetAmount = $request->bet_amount * count($selectedNumbers);
 
         $profit = ($cutOffPercent / 100) * $totalBetAmount;
+        $user_balance = Auth::user()->current_balance;
 
+        // dd($request->all());
         $game = Game::create([
             'branch_user_id' => $branch_user->id,
             'bet_amount' => $request->bet_amount,
@@ -210,13 +241,19 @@ class BranchController extends Controller
             'total_bet_amount' => $totalBetAmount,
             'profit' => $profit,
         ]);
+        $branch_user->update([
+            'current_balance'=> $user_balance - $profit,
+        ]);
+        Session::forget('callHistory');
+        // dd($request->winning_pattern);
 
-        // Associate selected cards with the game
-        // $game->bingoCards()->attach($request->input('selected_numbers'));
+        // Store game data in session
+        Session::put('gameId', $game->id);
+        Session::put('winning_pattern', $request->input('winning_pattern') ?? []);
+        Session::put('selected_numbers', $request->input('selected_numbers') ?? []);
 
-        return view('branch.game-page', ['game' => $game->id]);
+        return redirect()->route('bingo.index');
     }
-
 
 
     public function gamePage($gameId)
@@ -244,7 +281,21 @@ class BranchController extends Controller
     public function cards()
     {
         $bingoCards = BingoCard::all();
+        $branchUser = Auth::user();
 
-        return view('branch.cards', compact('bingoCards'));
+        return view('branch.cards', compact('bingoCards','branchUser'));
+    }
+
+    public function showReport(Request $request)
+    {
+        $branchUser = Auth::user();
+
+        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
+        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
+
+        $games = Game::whereBetween('created_at', [$startDate, $endDate])->get();
+        $totalProfit = $games->sum('profit');
+
+        return view('branch.report', compact('games', 'totalProfit', 'startDate', 'endDate','branchUser'));
     }
 }

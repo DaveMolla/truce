@@ -30,6 +30,10 @@
                             class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Boards</a>
                     </li>
                     <li class="mb-4">
+                        <a href="{{ route('branch.report') }}"
+                            class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Report</a>
+                    </li>
+                    <li class="mb-4">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="text-lg hover:text-gray-400">Logout</button>
