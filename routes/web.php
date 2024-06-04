@@ -69,6 +69,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('branch/game/{game}', [BranchController::class, 'gamePage']);
 
 
+    Route::get('branch/report', [BranchController::class, 'showReport'])->name('branch.report');
+    Route::post('branch/check', [BingoController::class, 'checkBoard'])->name('bingo.check');
 
 
     Route::get('/bingo', [BingoController::class,'index'])->name('bingo.index');
