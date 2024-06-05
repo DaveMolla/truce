@@ -40,7 +40,7 @@ class UsersTableSeeder extends Seeder
             'role' => 'branch',
             'address' => 'Branch Address',
             'password' => Hash::make('password'),
-            'cutt_off_percent' => '20'
+            'cut_off_percent' => '20'
         ]);
 
         // Create agent
