@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Let's Play Bingo!</title>
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-</head>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}"></head> --}}
 
 <body>
     <div class="main-container">
@@ -164,7 +164,7 @@
     </div>
 
 
-    <script src="{{ mix('js/app.js') }}"></script>
+    {{-- <script src="{{ mix('js/app.js') }}"></script> --}}
 </body>
 
 </html>
