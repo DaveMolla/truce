@@ -355,6 +355,17 @@
                     }
                 });
 
+                document.addEventListener('keydown', function(event) {
+                    if (event.code === 'Space') {
+                        event.preventDefault();
+                        if (isRunning) {
+                            pauseCalling();
+                        } else {
+                            startCalling();
+                        }
+                    }
+                });
+
                 // Automatically start calling when the page loads
                 startCalling();
                 resetCountdown();
