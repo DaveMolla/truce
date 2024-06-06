@@ -25,42 +25,69 @@
         }
 
         .number-grid button.selected {
-            background-color: #1d4ed8;
+            background-color: #019DD6;
         }
 
-        .pattern-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 0.1rem;
-            margin-top: 1rem;
-            background-color: #ffffff;
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            margin-right: 100px;
+        .pattern-display {
+            background-color: #fff;
+            width: 220px;
+            border-collapse: collapse;
+            margin-right: 200px;
             margin-top: -500px;
         }
 
-        .pattern-grid .cell {
+        .pattern-grid table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .pattern-grid th,
+        .pattern-grid td {
+            border: 3px solid #014576;
             width: 2rem;
             height: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #444;
+            text-align: center;
+            padding: 5px;
+        }
+
+        .pattern-grid th {
+            background-color: #014576;
+            color: white;
         }
 
         .pattern-grid .circle {
-            width: 1.5rem;
-            height: 1.5rem;
-            background-color: #1d4ed8;
+            width: 1.7rem;
+            height: 1.7rem;
+            background-color: #019DD6;
             border-radius: 50%;
+            margin: auto;
         }
 
         .pattern-grid .free-spot {
             background-color: #ffd700;
-            width: 1.5rem;
-            height: 1.5rem;
+            width: 1.7rem;
+            height: 1.7rem;
             border-radius: 50%;
+            margin: auto;
+        }
+         .pattern-grid th:nth-child(2) {
+            background-color: #014576;
+        }
+
+        .pattern-grid th:nth-child(3) {
+            background-color: #014576;
+        }
+
+        .pattern-grid th:nth-child(4) {
+            background-color: #014576;
+        }
+
+        .pattern-grid th:nth-child(5) {
+            background-color: #014576;
+        }
+        .caller_language:hover
+        {
+            background-color: #014576;
         }
     </style>
 </head>
@@ -88,11 +115,30 @@
         <!-- Main content -->
         <div class="p-10 w-full max-w-6xl mx-auto">
             <div class="grid grid-cols-12 gap-4">
+
+                {{-- @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif --}}
                 <!-- First column (8 columns) -->
                 <div class="col-span-12 md:col-span-8">
                     <form method="POST" action="{{ route('branch.game-page') }}">
                         @csrf
 
+                        @if ($errors->any())
+                        <div class="text-red-500 alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label for="bet_amount" class="block mb-2 text-sm font-medium text-white">Bet
@@ -151,8 +197,8 @@
                         <input type="hidden" name="number_of_selected_numbers" id="number_of_selected_numbers">
                         <input type="hidden" name="total_amount" id="total_amount">
 
-                        <button type="submit" style="background-color: #facc15;"
-                            class="w-full text-gray-900 font-bold py-2 px-4 rounded">
+                        <button type="submit" style="background-color: #019DD6;"
+                            class="w-full text-gray-100 font-bold py-2 px-4 rounded">
                             Create Game
                         </button>
                     </form>
@@ -162,8 +208,10 @@
 
             </div>
         </div>
-        <div class="pattern-grid" id="pattern_grid">
-            <!-- The pattern grid will be generated here -->
+        <div class="pattern-display">
+            <div class="pattern-grid" id="pattern_grid">
+                <!-- The pattern grid will be generated here -->
+            </div>
         </div>
 
     </div>
@@ -211,22 +259,32 @@
 
                 patternGrid.innerHTML = ''; // Clear existing grid
 
-                patternData.forEach((row, rowIndex) => {
-                    row.forEach((cell, cellIndex) => {
-                        const div = document.createElement('div');
-                        div.className = 'cell';
-                        if (cell || (rowIndex === 2 && cellIndex === 2)) {
-                            const circle = document.createElement('div');
-                            circle.className = 'circle';
-                            if (rowIndex === 2 && cellIndex === 2) {
-                                circle.style.backgroundColor =
-                                    '#facc15'; // Yellow for the center free spot
-                            }
-                            div.appendChild(circle);
-                        }
-                        patternGrid.appendChild(div);
-                    });
+                const table = document.createElement('table');
+                const headerRow = document.createElement('tr');
+                const headers = ['B', 'I', 'N', 'G', 'O'];
+
+                headers.forEach(header => {
+                    const th = document.createElement('th');
+                    th.textContent = header;
+                    headerRow.appendChild(th);
                 });
+                table.appendChild(headerRow);
+
+                patternData.forEach((row, rowIndex) => {
+                    const tr = document.createElement('tr');
+                    row.forEach((cell, cellIndex) => {
+                        const td = document.createElement('td');
+                        const div = document.createElement('div');
+                        if (cell || (rowIndex === 2 && cellIndex === 2)) {
+                            div.className = (rowIndex === 2 && cellIndex === 2) ? 'free-spot' : 'circle';
+                        }
+                        td.appendChild(div);
+                        tr.appendChild(td);
+                    });
+                    table.appendChild(tr);
+                });
+
+                patternGrid.appendChild(table);
             });
 
             // Trigger change event to load the default pattern on page load

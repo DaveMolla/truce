@@ -113,20 +113,32 @@ class AdminController extends Controller
      */
     public function dashboard()
     {
-        return view('admin.dashboard');
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+            return view('admin.dashboard');
+        }
+        return redirect()->back();
     }
 
     public function manageAgentAccount()
     {
         $agents = User::where('role', 'agent')->paginate(10);
-        return view('admin.manage-agent-account', compact('agents'));
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+            return view('admin.manage-agent-account', compact('agents'));
+        }
+        return redirect()->back();
     }
 
     public function manageBranchAccount()
     {
         $agents = Agent::all();
         $branches = Branch::paginate(10);
-        return view('admin.manage-branch-account', compact('branches', 'agents'));
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+            return view('admin.manage-branch-account', compact('branches', 'agents'));
+        }
+        return redirect()->back();
     }
 
     public function topUpAgent(Request $request)
@@ -136,11 +148,15 @@ class AdminController extends Controller
             'amount' => 'required|numeric|min:1',
         ]);
 
-        $agent = User::find($request->agent_id);
-        $agent->current_balance = ($agent->current_balance ?? 0) + $request->amount;
-        $agent->save();
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+            $agent = User::find($request->agent_id);
+            $agent->current_balance = ($agent->current_balance ?? 0) + $request->amount;
+            $agent->save();
 
-        return redirect()->back()->with('success', 'Amount topped up successfully!');
+            return redirect()->back()->with('success', 'Amount topped up successfully!');
+        }
+        return redirect()->back();
     }
 
     public function withdrawAgent(Request $request)
@@ -150,11 +166,15 @@ class AdminController extends Controller
             'amount' => 'required|numeric|min:1',
         ]);
 
-        $agent = User::find($request->agent_id);
-        $agent->current_balance = max(($agent->current_balance ?? 0) - $request->amount, 0);
-        $agent->save();
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+            $agent = User::find($request->agent_id);
+            $agent->current_balance = max(($agent->current_balance ?? 0) - $request->amount, 0);
+            $agent->save();
 
-        return redirect()->back()->with('success', 'Amount withdrawn successfully!');
+            return redirect()->back()->with('success', 'Amount withdrawn successfully!');
+        }
+        return redirect()->back();
     }
 
     public function topUpBranch(Request $request)
@@ -165,18 +185,21 @@ class AdminController extends Controller
         ]);
         // dd($request->amount);
 
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+            $branch = Branch::find($request->branch_id);
+            $branchUser = User::find($branch->user_id);
+            // $branch = User::find($request->branch_id);
+            // dd($branchUser);
+            $branchUser->current_balance += $request->amount;
 
-        $branch = Branch::find($request->branch_id);
-        $branchUser = User::find($branch->user_id);
-        // $branch = User::find($request->branch_id);
-        // dd($branchUser);
-        $branchUser->current_balance += $request->amount;
+            // $branch->current_balance = ($branch->current_balance ?? 0) + $request->amount;
+            // $branch->save();
+            $branchUser->save();
 
-        // $branch->current_balance = ($branch->current_balance ?? 0) + $request->amount;
-        // $branch->save();
-        $branchUser->save();
-
-        return redirect()->back()->with('success', 'Amount topped up successfully!');
+            return redirect()->back()->with('success', 'Amount topped up successfully!');
+        }
+        return redirect()->back();
     }
 
     public function withdrawBranch(Request $request)
@@ -185,16 +208,20 @@ class AdminController extends Controller
             'branch_id' => 'required|exists:users,id',
             'amount' => 'required|numeric|min:1',
         ]);
+        $user = Auth::user();
+        if ($user->role === 'admin') {
 
-        $branch = Branch::find($request->branch_id);
+            $branch = Branch::find($request->branch_id);
 
-        $branchUser = User::find($branch->user_id);
-        $branchUser->current_balance -= $request->amount;
+            $branchUser = User::find($branch->user_id);
+            $branchUser->current_balance -= $request->amount;
 
-        // $branch->current_balance = max(($branch->current_balance ?? 0) - $request->amount, 0);
-        $branchUser->save();
+            // $branch->current_balance = max(($branch->current_balance ?? 0) - $request->amount, 0);
+            $branchUser->save();
 
-        return redirect()->back()->with('success', 'Amount withdrawn successfully!');
+            return redirect()->back()->with('success', 'Amount withdrawn successfully!');
+        }
+        return redirect()->back();
     }
 
     public function assignBranch(Request $request)
@@ -206,13 +233,17 @@ class AdminController extends Controller
             'agent_id' => 'required',
         ]);
 
-        $branch = Branch::find($request->branch_id);
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+            $branch = Branch::find($request->branch_id);
 
-        $branch->update([
-            'agent_id' => $request->agent_id,
-        ]);
+            $branch->update([
+                'agent_id' => $request->agent_id,
+            ]);
 
-        return redirect()->back()->with('success', 'Branch assigned to agent successfully!');
+            return redirect()->back()->with('success', 'Branch assigned to agent successfully!');
+        }
+        return redirect()->back();
     }
 
     public function updateAgentPassword(Request $request)
@@ -222,11 +253,15 @@ class AdminController extends Controller
             'newPassword' => 'required|string',
         ]);
 
-        $user = User::findOrFail($request->branch_id);
-        $user->password = Hash::make($request->newPassword);
-        $user->save();
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+            $user = User::findOrFail($request->branch_id);
+            $user->password = Hash::make($request->newPassword);
+            $user->save();
 
-        return redirect()->back()->with('success', 'Password changed successfully!');
+            return redirect()->back()->with('success', 'Password changed successfully!');
+        }
+        return redirect()->back();
     }
 
     public function updateBranchPassword(Request $request)
@@ -236,11 +271,15 @@ class AdminController extends Controller
             'newPassword' => 'required|string',
         ]);
 
-        $user = User::findOrFail($request->branch_id);
-        $user->password = Hash::make($request->newPassword);
-        $user->save();
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+            $user = User::findOrFail($request->branch_id);
+            $user->password = Hash::make($request->newPassword);
+            $user->save();
 
-        return redirect()->back()->with('success', 'Password changed successfully!');
+            return redirect()->back()->with('success', 'Password changed successfully!');
+        }
+        return redirect()->back();
     }
 
     public function setCutoff(Request $request)
@@ -250,14 +289,18 @@ class AdminController extends Controller
             'cutoffPercent' => 'required|numeric|min:0|max:100',
         ]);
 
-        $branch = Branch::findOrFail($request->branch_id);
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+            $branch = Branch::findOrFail($request->branch_id);
 
-        $branchUser = User::find($branch->user_id);
-        $branchUser->update([
-            'cut_off_percent'=>$request->cutoffPercent,
-        ]);
-        // dd($request->cut_off_percent);
-        return redirect()->back()->with('success', 'Cutoff percent set successfully!');
+            $branchUser = User::find($branch->user_id);
+            $branchUser->update([
+                'cut_off_percent' => $request->cutoffPercent,
+            ]);
+            // dd($request->cut_off_percent);
+            return redirect()->back()->with('success', 'Cutoff percent set successfully!');
+        }
+        return redirect()->back();
     }
 
     public function cards()

@@ -76,5 +76,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/bingo', [BingoController::class,'index'])->name('bingo.index');
     Route::post('/bingo/call', [BingoController::class,'callNextNumber'])->name('bingo.call');
     Route::post('/bingo/reset', [BingoController::class,'resetBoard'])->name('bingo.reset');
+    Route::post('/bingo/end', [BingoController::class,'endGame'])->name('bingo.end');
 
 });

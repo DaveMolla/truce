@@ -31,3 +31,37 @@ php artisan view:clear
 chown -R www-data:www-data $PROJECT_PATH
 
 echo "Deployment completed!"
+
+
+
+# #!/bin/bash
+
+# # Navigate to the project directory
+# cd /home/dirtechnologycom/truce.dirtechnology.com
+
+# # Pull the latest changes from the main branch
+# git pull origin main
+
+# # Install PHP dependencies
+# composer install --no-dev --optimize-autoloader
+
+# # Install Node.js dependencies and build assets
+# # Use the full path to npm
+# /home/dirtechnologycom/nodevenv/truce.dirtechnology.com/20/bin/npm install
+# /home/dirtechnologycom/nodevenv/truce.dirtechnology.com/20/bin/npm run dev
+
+# # Migrate and seed the database
+# php artisan migrate --force
+# php artisan db:seed --force
+
+# # Clear and cache configurations
+# php artisan config:cache
+# php artisan route:cache
+# php artisan view:cache
+
+# # Set the correct permissions
+# chown -R dirtechnologycom:dirtechnologycom /home/dirtechnologycom/truce.dirtechnology.com
+# chmod -R 755 /home/dirtechnologycom/truce.dirtechnology.com/storage
+# chmod -R 755 /home/dirtechnologycom/truce.dirtechnology.com/bootstrap/cache
+
+# echo "Deployment completed successfully."

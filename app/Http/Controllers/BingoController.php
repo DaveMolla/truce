@@ -14,18 +14,18 @@ class BingoController extends Controller
 {
     public function index()
     {
+        
         $callHistory = Session::get('callHistory', []);
         $totalCalls = count($callHistory);
         $currentCall = end($callHistory);
         $gameId = Session::get('gameId');
         $winningPatterns = json_decode(Session::get('winning_pattern', '[]'), true);
-        // dd($winningPatterns);
+
         $availableNumbers = array_diff(range(1, 75), $callHistory);
         $numbersAvailable = !empty($availableNumbers);
 
-        $winningP =WinningPattern::find($winningPatterns);
-        // dd($winningP);
-        $win = $winningP->pattern_data;
+        $winningP = WinningPattern::find($winningPatterns);
+        $win = json_decode($winningP->pattern_data, true);  // Ensure $win is an array
 
         $branchUser = Auth::user();
 
@@ -35,9 +35,9 @@ class BingoController extends Controller
 
         $winningAmount = $totalBetAmount - $profit;
 
-
-        return view('bingo.index', compact('callHistory', 'totalCalls', 'currentCall', 'winningPatterns', 'gameId', 'numbersAvailable', 'winningAmount', 'win','branchUser'));
+        return view('bingo.index', compact('callHistory', 'totalCalls', 'currentCall', 'winningPatterns', 'gameId', 'numbersAvailable', 'winningAmount', 'win', 'branchUser'));
     }
+
 
     public function callNextNumber()
     {
@@ -48,6 +48,8 @@ class BingoController extends Controller
             $callHistory[] = $newNumber;
             Session::put('callHistory', $callHistory);
         }
+        // sleep(1);
+
 
         return redirect()->route('bingo.index');
     }
@@ -67,6 +69,18 @@ class BingoController extends Controller
     {
         Session::forget('callHistory');
         return redirect()->route('bingo.index');
+    }
+    public function endGame(Request $request)
+    {
+        $gameId = Session::get('gameId');
+        $callHistory = Session::get('callHistory', []);
+        $totalCalls = count($callHistory);
+        $game = Game::find($gameId);
+        $game->update([
+            'total_calls' => $totalCalls ?? '0',
+            'status' => 'end',
+        ]);
+        return redirect()->route('branch.dashboard');
     }
 
     public function checkBoard(Request $request)
@@ -88,7 +102,7 @@ class BingoController extends Controller
 
         $winningAmount = $totalBetAmount - $profit;
 
-        $winningP =WinningPattern::find($winningPatterns);
+        $winningP = WinningPattern::find($winningPatterns);
         // dd($winningP);
         $win = $winningP->pattern_data;
 
@@ -121,7 +135,7 @@ class BingoController extends Controller
         }
         // dd($win);
 
-        return view('bingo.index', compact('callHistory', 'totalCalls', 'currentCall', 'winningPatterns', 'winningAmount', 'numbersAvailable', 'boardNumbers', 'isWinningPattern', 'cardNumber', 'win','branchUser'));
+        return view('bingo.index', compact('callHistory', 'totalCalls', 'currentCall', 'winningPatterns', 'winningAmount', 'numbersAvailable', 'boardNumbers', 'isWinningPattern', 'cardNumber', 'win', 'branchUser'));
     }
 
 }

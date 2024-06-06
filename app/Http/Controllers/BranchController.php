@@ -4,6 +4,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateGameRequest;
 use App\Models\BingoCard;
 use App\Models\Branch;
 use App\Models\Game;
@@ -63,6 +64,31 @@ class BranchController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
+    // public function login(Request $request)
+    // {
+    //     $request->validate([
+    //         'phone' => 'required|string',
+    //         'password' => 'required|string',
+    //     ]);
+
+    //     $user = User::where('phone', $request->phone)->first();
+
+    //     if ($user && Hash::check($request->password, $user->password)) {
+    //         if ($user->role === 'branch') {
+    //             Auth::login($user);
+    //             return redirect()->intended(route('branch.dashboard'));
+    //         } else {
+    //             return back()->withErrors([
+    //                 'phone' => 'You do not have permission to access this area.',
+    //             ]);
+    //         }
+    //     }
+
+    //     return back()->withErrors([
+    //         'phone' => 'The provided credentials do not match our records.',
+    //     ]);
+    // }
+
     public function login(Request $request)
     {
         $request->validate([
@@ -73,19 +99,21 @@ class BranchController extends Controller
         $user = User::where('phone', $request->phone)->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
-            if ($user->role === 'branch') {
-                Auth::login($user);
-                return redirect()->intended(route('branch.dashboard'));
-            } else {
-                return back()->withErrors([
-                    'phone' => 'You do not have permission to access this area.',
-                ]);
+            Auth::login($user);
+            switch ($user->role) {
+                case 'admin':
+                    return redirect()->route('admin.dashboard');
+                case 'agent':
+                    return redirect()->route('agent.dashboard');
+                case 'branch':
+                    return redirect()->route('branch.dashboard');
+                default:
+                    Auth::logout();
+                    return back()->withErrors(['phone' => 'Invalid role.']);
             }
         }
 
-        return back()->withErrors([
-            'phone' => 'The provided credentials do not match our records.',
-        ]);
+        return back()->withErrors(['phone' => 'The provided credentials do not match our records.']);
     }
 
     /**
@@ -112,28 +140,37 @@ class BranchController extends Controller
      */
     public function dashboard()
     {
-        $bingoCards = BingoCard::all();
-        $winningPatterns = WinningPattern::all();
-        return view('branch.dashboard', compact('bingoCards', 'winningPatterns'));
+        $user = Auth::user();
+        if ($user->role === 'branch') {
+            $bingoCards = BingoCard::all();
+            $winningPatterns = WinningPattern::all();
+            return view('branch.dashboard', compact('bingoCards', 'winningPatterns'));
+        }
+        return redirect()->back();
     }
     public function history(Request $request)
     {
-        // $recentGames = Game::latest()->paginate(10);
-        $branchUser = Auth::user();
-        // $games = Game::where('branch_user_id', $branchUser->id)->first();
+        $user = Auth::user();
+        if ($user->role === 'branch') {
+            // $recentGames = Game::latest()->paginate(10);
+            $branchUser = Auth::user();
+            // $games = Game::where('branch_user_id', $branchUser->id)->first();
 
-        // $branch_user = Branch::where('user_id', Auth::user()->id)->first();
-        // $branches = Branch::where('agent_id', $agent->id)->get();
-        // dd($games);
-        $recentGames = Game::where('branch_user_id', $branchUser->id)->latest()->paginate(10);
+            // $branch_user = Branch::where('user_id', Auth::user()->id)->first();
+            // $branches = Branch::where('agent_id', $agent->id)->get();
+            // dd($games);
+            $recentGames = Game::where('branch_user_id', $branchUser->id)->latest()->paginate(10);
 
-        $totalGames = Game::where('branch_user_id', $branchUser->id)->count();
+            $totalGames = Game::where('branch_user_id', $branchUser->id)->count();
 
-        $branch = Branch::where('user_id', $branchUser->id)->first();
+            $branch = Branch::where('user_id', $branchUser->id)->first();
 
-        $walletBalance = $branchUser->current_balance ? $branchUser->current_balance : 0;
+            $walletBalance = $branchUser->current_balance ? $branchUser->current_balance : 0;
 
-        return view('branch.history', compact('totalGames', 'walletBalance', 'branchUser', 'recentGames'));
+            return view('branch.history', compact('totalGames', 'walletBalance', 'branchUser', 'recentGames'));
+        }
+        return redirect()->back();
+
     }
 
     // public function createGame(Request $request)
@@ -192,7 +229,8 @@ class BranchController extends Controller
 
     //     $games = Game::all();
 
-    //     $selectedNumbers = explode(',', $request->input('selected_numbers'));
+    //     $selectedNumbers = explode(',', $request->input('selected_numbers'
+
 
     //     $branch_user = User::where('role', 'branch', Auth::user()->id)->first();
     //     // dd($branch_user);
@@ -215,56 +253,77 @@ class BranchController extends Controller
     //     ]);
 
     //     // Associate selected cards with the game
-    //     // $game->bingoCards()->attach($request->input('selected_numbers'));
+    //     // $game->bingoCards()->attach($request->input('selected_numbers'
+
 
     //     return view('branch.game-page', ['game' => $game->id]);
     // }
-    public function createGame(Request $request)
+    public function createGame(CreateGameRequest $request)
     {
-        $selectedNumbers = explode(',', $request->input('selected_numbers'));
-
-        $branch_user = User::where('role', 'branch', Auth::user()->id)->first();
         $user = Auth::user();
-        $cutOffPercent = $user->cut_off_percent ?? 0;
-        $totalBetAmount = $request->bet_amount * count($selectedNumbers);
+        if ($user->role === 'branch') {
+            $selectedNumbers = explode(',', $request->input('selected_numbers'));
 
-        $profit = ($cutOffPercent / 100) * $totalBetAmount;
-        $user_balance = Auth::user()->current_balance;
+            $branch_user = User::where('role', 'branch', Auth::user()->id)->first();
+            $user = Auth::user();
+            $cutOffPercent = $user->cut_off_percent ?? 0;
+            $totalBetAmount = $request->bet_amount * count($selectedNumbers);
 
-        // dd($request->all());
-        $game = Game::create([
-            'branch_user_id' => $branch_user->id,
-            'bet_amount' => $request->bet_amount,
-            'total_players' => count($selectedNumbers),
-            'total_calls' => 0,
-            'status' => 'pending',
-            'total_bet_amount' => $totalBetAmount,
-            'profit' => $profit,
-        ]);
-        $branch_user->update([
-            'current_balance'=> $user_balance - $profit,
-        ]);
-        Session::forget('callHistory');
-        // dd($request->winning_pattern);
+            $profit = ($cutOffPercent / 100) * $totalBetAmount;
+            $user_balance = Auth::user()->current_balance;
 
-        // Store game data in session
-        Session::put('gameId', $game->id);
-        Session::put('winning_pattern', $request->input('winning_pattern') ?? []);
-        Session::put('selected_numbers', $request->input('selected_numbers') ?? []);
+            if (Auth::user()->current_balance <= $profit) {
+                return back()->withErrors([
+                    'phone' => 'You do not have enough balance.',
+                ]);
+            }
 
-        return redirect()->route('bingo.index');
+            // dd($request->all());
+            $game = Game::create([
+                'branch_user_id' => $branch_user->id,
+                'bet_amount' => $request->bet_amount,
+                'total_players' => count($selectedNumbers),
+                'total_calls' => 0,
+                'status' => 'pending',
+                'total_bet_amount' => $totalBetAmount,
+                'profit' => $profit,
+            ]);
+            $branch_user->update([
+                'current_balance' => $user_balance - $profit,
+            ]);
+            Session::forget('callHistory');
+            // dd($request->winning_pattern);
+
+            // Store game data in session
+            Session::put('gameId', $game->id);
+            Session::put('winning_pattern', $request->input('winning_pattern') ?? []);
+            Session::put('selected_numbers', $request->input('selected_numbers') ?? []);
+            $callSpeedMapping = [
+                'very_fast' => 3000,
+                'fast' => 5000,
+            ];
+            $callSpeed = $callSpeedMapping[$request->input('call_speed')] ?? 5000;
+            Session::put('caller_speed', $callSpeed);
+
+            return redirect()->route('bingo.index');
+        }
+        return redirect()->back();
     }
 
 
     public function gamePage($gameId)
     {
-        $game = Game::with(['bingoCards', 'calledNumbers'])->findOrFail($gameId);
-        $previousCall = $game->calledNumbers->last();
+        $user = Auth::user();
+        if ($user->role === 'branch') {
+            $game = Game::with(['bingoCards', 'calledNumbers'])->findOrFail($gameId);
+            $previousCall = $game->calledNumbers->last();
 
-        return view('branch.game-page', [
-            'game' => $game,
-            'previousCall' => $previousCall
-        ]);
+            return view('branch.game-page', [
+                'game' => $game,
+                'previousCall' => $previousCall
+            ]);
+        }
+        return redirect()->back();
     }
 
     // public function showGamePage()
@@ -283,19 +342,23 @@ class BranchController extends Controller
         $bingoCards = BingoCard::all();
         $branchUser = Auth::user();
 
-        return view('branch.cards', compact('bingoCards','branchUser'));
+        return view('branch.cards', compact('bingoCards', 'branchUser'));
     }
 
     public function showReport(Request $request)
     {
-        $branchUser = Auth::user();
+        $user = Auth::user();
+        if ($user->role === 'branch') {
+            $branchUser = Auth::user();
 
-        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
-        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
+            $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
+            $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
 
-        $games = Game::whereBetween('created_at', [$startDate, $endDate])->get();
-        $totalProfit = $games->sum('profit');
+            $games = Game::whereBetween('created_at', [$startDate, $endDate])->get();
+            $totalProfit = $games->sum('profit');
 
-        return view('branch.report', compact('games', 'totalProfit', 'startDate', 'endDate','branchUser'));
+            return view('branch.report', compact('games', 'totalProfit', 'startDate', 'endDate', 'branchUser'));
+        }
+        return redirect()->back();
     }
 }
