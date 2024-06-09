@@ -292,7 +292,7 @@ class BranchController extends Controller
                 'current_balance' => $user_balance - $profit,
             ]);
             Session::forget('callHistory');
-            // dd($request->winning_pattern);
+            // dd($selectedNumbers);
 
             // Store game data in session
             Session::put('gameId', $game->id);

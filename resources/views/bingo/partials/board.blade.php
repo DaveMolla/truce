@@ -7,6 +7,35 @@
     <title>Let's Play Bingo!</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <style>
+        .flex-container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .last-five-calls {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .control-panel-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-right: 300px;
+        }
+
+        .display-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            margin-left: 20px;
+        }
+
         .bingo-pattern {
             background-color: #fff;
             width: 270px;
@@ -59,6 +88,7 @@
         }
 
         @media (max-width: 768px) {
+
             .bingo-pattern th,
             .bingo-pattern td {
                 width: 1.5rem;
@@ -155,7 +185,6 @@
                 </form>
             </div> --}}
             <div class="winning-patterns">
-                <h3>Winning Patterns</h3>
                 <table class="bingo-pattern">
                     <thead class="bingo-pattern-header">
                         <tr>
@@ -196,194 +225,258 @@
     </div>
 
     <!-- Add last five calls display below the table -->
-    <div class="last-five-calls">
-        @php
-            $lastFiveCalls = array_slice($callHistory, -6);
-            $colors = [
-                'B' => 'ball-blue',
-                'I' => 'ball-red',
-                'N' => 'ball-orange',
-                'G' => 'ball-green',
-                'O' => 'ball-yellow',
-            ];
-        @endphp
-        @foreach (array_reverse($lastFiveCalls) as $number)
+    <div class="flex-container">
+        <div class="last-five-calls">
             @php
-                $letter = $numberToLetterMap[$number];
-                $isCurrentCall = $number === $currentCall;
+                $lastFiveCalls = array_slice($callHistory, -6);
+                $colors = [
+                    'B' => 'ball-blue',
+                    'I' => 'ball-red',
+                    'N' => 'ball-orange',
+                    'G' => 'ball-green',
+                    'O' => 'ball-yellow',
+                ];
             @endphp
-            <div class="previous-number {{ $colors[$letter] }} {{ $isCurrentCall ? 'current-call' : '' }}">
-                <span>{{ $letter }}<br>{{ $number }}</span>
-            </div>
-        @endforeach
-        <span class="bottom-right">
-            <div class="control-panel">
-                {{-- <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo"> --}}
-                <div class="display-panel">
-                    <div class="total-calls">
-                        <span>Total Calls</span>
-                        <div name="total_calls" class="display">{{ $totalCalls }}</div>
-                    </div>
-                    {{-- <div class="previous-call">
-                        <span>Previous Call</span>
-                        <div class="display">{{ $currentCall }}</div>
-                    </div> --}}
+            @foreach (array_reverse($lastFiveCalls) as $number)
+                @php
+                    $letter = $numberToLetterMap[$number];
+                    $isCurrentCall = $number === $currentCall;
+                @endphp
+                <div class="previous-number {{ $colors[$letter] }} {{ $isCurrentCall ? 'current-call' : '' }}">
+                    <span>{{ $letter }}<br>{{ $number }}</span>
                 </div>
-                <div class="display-panel">
-                    {{-- <div class="total-calls">
-                        <span>Total Calls</span>
-                        <div class="display">{{ $totalCalls }}</div>
-                    </div> --}}
-                    <div class="previous-call">
-                        <span>Previous Call</span>
-                        <div class="display">{{ $currentCall }}</div>
-                    </div>
-                </div>
-                {{-- <div class="buttons">
-                    <form action="{{ route('bingo.call') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn" {{ $numbersAvailable ? '' : 'disabled' }}>Next Number</button>
-                    </form>
-                    <form action="{{ route('bingo.reset') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn">Reset Board</button>
-                    </form>
-                </div> --}}
-            </div>
-        </span>
-
-        <div class="control-panel">
-            {{-- <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo"> --}}
-            <div class="buttons">
-                <div id="countdown-display" class="text-white mt-4"></div>
-
-                <form action="{{ route('bingo.check') }}" method="POST">
-                    @csrf
-                    <input type="text" id="name" name="name" required>
-                    <button type="submit" class="btn">Check</button>
-                </form>
-                {{-- <form action="{{ route('bingo.call') }}" method="POST" id="call-form">
-                    @csrf
-                    <button type="submit" class="btn" id="next-number-btn"
-                        {{ $numbersAvailable ? '' : 'disabled' }}>Next Number</button>
-                </form> --}}
-                <form action="{{ route('bingo.call') }}" method="POST" id="call-form">
-                    @csrf
-                    <button type="submit" class="btn" id="next-number-btn"
-                        {{ $numbersAvailable}}>Start Calling</button>
-                </form>
-                {{-- <form action="{{ route('bingo.reset') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn">Reset Board</button>
-                </form> --}}
-                <form action="{{ route('bingo.end') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn-end">End Game</button>
-                </form>
-                {{-- <audio id="audio" src="{{ asset('audios/Shefle.mp3') }}" autoplay="false"></audio>
-                <button onclick="playSound();" class="btn">Shuffle</button> --}}
-                {{-- <audio id="audio" src="{{ asset('audios/Shefle.mp3') }}" autoplay="false"></audio>
-                <button id="shuffleButton" class="btn">Shuffle</button> --}}
-            </div>
+            @endforeach
         </div>
 
-        {{-- <script>
-            document.getElementById("shuffleButton").addEventListener("click", function() {
-                var sound = document.getElementById("audio");
-                sound.play();
+        <div class="control-panel-group">
+            <span class="bottom-right">
+                <div class="control-panel">
+                    <div class="display-panel">
+                        <div class="previous-call">
+                            <span>Next call</span>
+                            <div id="countdown-display" class="display"></div>
+                        </div>
+                        <div class="total-calls">
+                            <span>Total Calls</span>
+                            <div name="total_calls" class="display">{{ $totalCalls }}</div>
+                        </div>
+                    </div>
+                </div>
+            </span>
+            <div class="buttons">
+                {{-- <div id="countdown-display" class="text-white mt-4"></div> --}}
+                <form action="{{ route('bingo.check') }}" method="POST">
+                    @csrf
+                    <div class="input-group">
+                        <input type="text" id="name" name="name" placeholder="Check Number" required>
+                        <button type="button" class="btn-check">Check</button>
+                    </div>
+
+                    <!-- Modal Structure -->
+                    <div id="myModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <p id="modal-text">Number check result will appear here.</p>
+                        </div>
+                    </div>
+
+                </form>
+                <form action="{{ route('bingo.call') }}" method="POST" id="call-form">
+                    @csrf
+                    <button type="submit" class="btn" id="next-number-btn" {{ $numbersAvailable }}>Start
+                        Calling</button>
+                </form>
+                <div class="button-container">
+                    <button id="shuffleButton" class="btn">Shuffle</button>
+                    <form action="{{ route('bingo.end') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn-end">End Game</button>
+                    </form>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let callSpeed = {{ session('caller_speed', 5000) }};
+            let countdown = callSpeed / 1000;
+            let intervalId;
+            let isRunning = false;
+            let totalCalls = {{ $totalCalls }}; // Fetch total calls from the server-side
+
+            const nextNumberBtn = document.getElementById('next-number-btn');
+            const countdownDisplay = document.getElementById('countdown-display');
+            const shuffleButton = document.getElementById('shuffleButton');
+            const shuffleSound = new Audio('audios/Shuffle.mp3');
+            var modal = document.getElementById("myModal");
+            var btn = document.querySelector(".btn-check");
+            var span = document.getElementsByClassName("close")[0];
+
+            // Display modal on button click
+            btn.onclick = function() {
+                var inputVal = document.getElementById("name").value;
+                document.getElementById("modal-text").textContent = "Checking number: " + inputVal;
+                modal.style.display = "block";
+            }
+
+            // Close the modal when the close button is clicked
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+
+            // Close the modal when clicking outside of the modal content
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+
+            shuffleButton.addEventListener('click', function() {
+                shuffleSound.play();
             });
 
-        </script> --}}
-        {{-- <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const callSpeed = {{ session('caller_speed', 5000) }};
-                const nextNumberBtn = document.getElementById('next-number-btn');
-
-                // Automatically call the next number at the specified interval
-                setInterval(() => {
-                    if (!nextNumberBtn.disabled) {
-                        document.getElementById('call-form').submit();
+            function startCalling() {
+                intervalId = setInterval(() => {
+                    if (totalCalls >= 75) {
+                        pauseCalling();
+                        alert('Maximum number of calls reached.');
+                        return;
                     }
-                }, callSpeed);
+                    countdown -= 1;
+                    countdownDisplay.textContent = `${countdown}s`;
+                    if (countdown <= 0) {
+                        fetchNextNumber();
+                    }
+                }, 1000);
+                isRunning = true;
+                nextNumberBtn.textContent = 'Pause';
+            }
+
+            function pauseCalling() {
+                clearInterval(intervalId);
+                isRunning = false;
+                nextNumberBtn.textContent = 'Start';
+            }
+
+            function resetCountdown() {
+                countdown = callSpeed / 1000;
+                countdownDisplay.textContent = `${countdown}s`;
+            }
+
+            nextNumberBtn.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (isRunning) {
+                    pauseCalling();
+                } else {
+                    startCalling();
+                }
             });
-        </script> --}}
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                let callSpeed = {{ session('caller_speed', 5000) }};
-                let countdown = callSpeed / 1000;
-                let intervalId;
-                let isRunning = false;
-                let totalCalls = {{ $totalCalls }}; // Fetch total calls from the server-side
 
-                const nextNumberBtn = document.getElementById('next-number-btn');
-                const countdownDisplay = document.getElementById('countdown-display');
-
-                function startCalling() {
-                    intervalId = setInterval(() => {
-                        if (totalCalls >= 75) {
-                            pauseCalling();
-                            alert('Maximum number of calls reached.');
-                            return;
-                        }
-                        countdown -= 1;
-                        countdownDisplay.textContent = `Next call in: ${countdown}s`;
-                        if (countdown <= 0) {
-                            document.getElementById('call-form').submit();
-                        }
-                    }, 1000);
-                    isRunning = true;
-                    nextNumberBtn.textContent = 'Pause';
-                }
-
-                function pauseCalling() {
-                    clearInterval(intervalId);
-                    isRunning = false;
-                    nextNumberBtn.textContent = 'Start';
-                }
-
-                function resetCountdown() {
-                    countdown = callSpeed / 1000;
-                    countdownDisplay.textContent = `Next call in: ${countdown}s`;
-                }
-
-                nextNumberBtn.addEventListener('click', function(event) {
+            document.addEventListener('keydown', function(event) {
+                if (event.code === 'Space') {
                     event.preventDefault();
                     if (isRunning) {
                         pauseCalling();
                     } else {
                         startCalling();
                     }
-                });
+                }
+            });
 
-                document.addEventListener('keydown', function(event) {
-                    if (event.code === 'Space') {
-                        event.preventDefault();
-                        if (isRunning) {
-                            pauseCalling();
-                        } else {
-                            startCalling();
-                        }
+            async function fetchNextNumber() {
+                const response = await fetch("{{ route('bingo.call') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     }
                 });
+                const data = await response.json();
+                const newNumber = data.number;
+                totalCalls = data.totalCalls;
+                updateBoard(data.callHistory);
+                updateCallDisplay(data.callHistory); // Make sure this function exists and is correct
 
-                // Automatically start calling when the page loads
-                startCalling();
-                resetCountdown();
-            });
-        </script>
-
-
-
-
-        {{-- <script>
-            function playSound() {
-                var sound = document.getElementById("audio");
-                sound.play();
+                if (newNumber !== null) {
+                    const audio = new Audio(`/audios/${newNumber}.mp3`);
+                    audio.play();
+                }
+                resetCountdown(); // Reset the countdown after fetching the number
             }
-        </script> --}}
 
-    </div>
+            function updateBoard(callHistory) {
+                const bingoButtons = document.querySelectorAll('.bingo-table button');
+                const totalCallsDisplay = document.querySelector('.total-calls .display');
+                if (totalCallsDisplay) {
+                    totalCallsDisplay.textContent = totalCalls;
+                }
 
+                // Update previous calls display
+                const previousCallsDisplay = document.querySelector('.previous-call .display');
+                if (previousCallsDisplay && callHistory.length) {
+                    previousCallsDisplay.textContent = callHistory[callHistory.length - 1];
+                }
+                bingoButtons.forEach(button => {
+                    const number = parseInt(button.textContent, 10);
+                    if (callHistory.includes(number)) {
+                        button.classList.add('called');
+                    } else {
+                        button.classList.remove('called');
+                    }
+                });
+            }
+
+            function updateCallDisplay(callHistory) {
+                const previousNumbersContainer = document.querySelector('.last-five-calls');
+                if (!previousNumbersContainer) {
+                    console.error("Last five calls container not found");
+                    return;
+                }
+                // Clear only the calls, not the entire display
+                previousNumbersContainer.innerHTML = '';
+
+                callHistory.slice(-6).reverse().forEach((number, index) => {
+                    const letter = getLetterForNumber(number);
+                    const colorClass = `ball-${getColorForLetter(letter)}`;
+                    const isCurrentCall = index === 0; // First element is the current call
+
+                    const callDiv = document.createElement('div');
+                    callDiv.className =
+                        `previous-number ${colorClass} ${isCurrentCall ? 'current-call' : ''}`;
+                    callDiv.innerHTML = `<span>${letter}<br>${number}</span>`;
+                    previousNumbersContainer.appendChild(callDiv);
+                });
+            }
+
+            // Make sure this function accurately reflects your bingo logic
+            function getLetterForNumber(number) {
+                if (number <= 15) return 'B';
+                if (number <= 30) return 'I';
+                if (number <= 45) return 'N';
+                if (number <= 60) return 'G';
+                if (number <= 75) return 'O';
+                return '?';
+            }
+
+            function getColorForLetter(letter) {
+                const colors = {
+                    'B': 'blue',
+                    'I': 'red',
+                    'N': 'orange',
+                    'G': 'green',
+                    'O': 'yellow',
+                };
+                return colors[letter] || 'default';
+            }
+
+
+            resetCountdown();
+        });
+    </script>
 
 </body>
 
