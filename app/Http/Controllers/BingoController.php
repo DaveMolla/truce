@@ -141,27 +141,46 @@ class BingoController extends Controller
     // }
 
     public function checkCard(Request $request)
-{
-    $cardId = $request->input('card_id');
-    $card = BingoCard::find($cardId);
+    {
+        $cardId = $request->input('card_id');
+        $card = BingoCard::find($cardId);
+        $calledNumbers = session('callHistory', []);
+        $winningPattern = json_decode(Session::get('winning_pattern', '[]'), true);
+        $winningP = WinningPattern::find($winningPattern);
+        $win = json_decode($winningP->pattern_data, true);
+        // \Log::info("Winning Pattern Indices: " . json_encode($win));
 
-    // Fetch called numbers from session or other storage
-    $calledNumbers = session('callHistory', []);
+        $hasWon = $this->checkWinningPattern($win, json_decode($card->card_data), $calledNumbers);
 
-    if ($card) {
         return back()->with([
             'show_modal' => true,
             'card_data' => json_decode($card->card_data),
-            'called_numbers' => $calledNumbers
-        ]);
-    } else {
-        return back()->with([
-            'show_modal' => true,
-            'card_data' => null,
-            'called_numbers' => $calledNumbers
+            'called_numbers' => $calledNumbers,
+            'has_won' => $hasWon,
+            'card_id' => $cardId
+
         ]);
     }
-}
+
+    private function checkWinningPattern($patternGrid, $cardData, $calledNumbers)
+    {
+        foreach ($patternGrid as $rowIndex => $row) {
+            foreach ($row as $colIndex => $isActive) {
+                if ($isActive) {
+                    $number = $cardData[$rowIndex][$colIndex];
+                    $isCenter = $rowIndex == 2 && $colIndex == 2; // Check if it's the center spot
+                    if ($number !== "FREE" && !$isCenter && !in_array($number, $calledNumbers)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+
+
+
 
 
 

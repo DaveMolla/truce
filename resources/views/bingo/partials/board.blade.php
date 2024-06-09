@@ -10,7 +10,7 @@
 
     <style>
         .bingo-card-table {
-            width: 600px;
+            width: 90%;
             /* Full width of the container */
             border-collapse: collapse;
             /* Collapses the border between cells */
@@ -19,8 +19,11 @@
             background-color: #f8f9fa;
             /* Light grey background */
             align-items: center;
-            margin-left: 600px;
-            height: 500px;
+            margin-left: 100px;
+            height: 90%;
+            /* background-color: #007bff */
+            font-size: 60px;
+            font-weight: bold;
         }
 
         .bingo-card-table th {
@@ -48,6 +51,17 @@
             color: black;
         }
 
+        #bkg {
+            background-color: #899dbe
+        }
+
+        .message {
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+            background-color: #ddd
+        }
+
         .bingo-card-table tbody tr:nth-child(even) {
             background-color: #f2f2f2;
             /* Zebra striping for rows */
@@ -58,9 +72,10 @@
             /* Hover effect for rows */
         }
 
-        .bingo-card-table td.called {
+        .bingo-card-table td.called,
+        .bingo-card-table td.center-spot {
             background-color: #007bff;
-            /* Blue background for called numbers */
+            /* Blue background for called numbers and the center spot */
             color: white;
             /* White text for better visibility */
         }
@@ -80,7 +95,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            /* margin-right: 00px; */
+            margin-right: 30px;
         }
 
         .display-panel {
@@ -326,7 +341,9 @@
                 <form action="{{ route('bingo.check') }}" method="POST">
                     @csrf
                     <div class="input-group">
-                        <input type="text" id="cardId" name="card_id" placeholder="Check Card ID" required>
+                        <input type="text" id="cardId" name="card_id" placeholder="Check Board"
+                            class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5 placeholder-gray-400"
+                            required>
                         <button type="submit" class="btn-check">Check</button>
                     </div>
                 </form>
@@ -351,10 +368,20 @@
                                         </svg>
                                     </button>
                                 </div>
-                                <div class="p-6 space-y-6">
+                                <div class="p-6 space-y-6" id="bkg">
                                     @if (session('card_data'))
                                         <table class="bingo-card-table">
                                             <thead>
+                                                <div class="message">
+                                                    @if (session('has_won'))
+                                                        <p class="text-green-500">Card {{ session('card_id') }} -> ዘግቷል!</p>
+                                                        <audio id="success-audio" src="{{ asset('audios/win.mp3') }}" autoplay></audio>
+                                                    @else
+                                                        <p class="text-red-500">Card {{ session('card_id') }} -> አልዘጋም!</p>
+                                                        <audio id="fail-audio" src="{{ asset('audios/not-win.mp3') }}" autoplay></audio>
+                                                    @endif
+                                                </div>
+
                                                 <tr>
                                                     <th style="background-color: #3B82F6">B</th>
                                                     <th style="background-color: #EF4444">I</th>
@@ -364,15 +391,26 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach (session('card_data') as $row)
+                                                @php $rowCount = 0; @endphp
+                                                @foreach (session('card_data', []) as $row)
+                                                    @php $cellCount = 0; @endphp
                                                     <tr>
                                                         @foreach ($row as $cell)
+                                                            @php
+                                                                $isCalled = in_array(
+                                                                    $cell,
+                                                                    session('called_numbers', []),
+                                                                );
+                                                                $isCenter = $rowCount == 2 && $cellCount == 2;
+                                                            @endphp
                                                             <td
-                                                                class="{{ in_array($cell, session('called_numbers', [])) ? 'called' : '' }}">
-                                                                {{ $cell }}
+                                                                class="{{ $isCalled ? 'called' : '' }} {{ $isCenter ? 'center-spot' : '' }}">
+                                                                {{ $isCenter ? 'FREE' : $cell }}
                                                             </td>
+                                                            @php $cellCount++; @endphp
                                                         @endforeach
                                                     </tr>
+                                                    @php $rowCount++; @endphp
                                                 @endforeach
                                             </tbody>
                                         </table>
@@ -463,6 +501,17 @@
             //     })
             //     .catch(error => console.error('Error:', error));
             // }
+
+            window.addEventListener('DOMContentLoaded', (event) => {
+                const successAudio = document.getElementById('success-audio');
+                const failAudio = document.getElementById('fail-audio');
+
+                if (successAudio) {
+                    successAudio.play();
+                } else if (failAudio) {
+                    failAudio.play();
+                }
+            });
 
             // Close modal on clicking outside of the modal content
             window.onclick = function(event) {
