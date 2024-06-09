@@ -14,26 +14,37 @@ class WinningPatternsTableSeeder extends Seeder
     public function run(): void
     {
         $patterns = [
+            // [
+            //     'name' => 'Both Diagonal Line',
+            //     'description' => 'Pattern description for both diagonal line.',
+            //     'pattern_data' => json_encode([
+            //         [1, 0, 0, 0, 1],
+            //         [0, 1, 0, 1, 0],
+            //         [0, 0, 1, 0, 0],
+            //         [0, 1, 0, 1, 0],
+            //         [1, 0, 0, 0, 1]
+            //     ])
+            // ],
+            // [
+            //     'name' => 'Horizontal Line',
+            //     'description' => 'Pattern description for horizontal line.',
+            //     'pattern_data' => json_encode([
+            //         [1, 1, 1, 1, 1],
+            //         [0, 0, 0, 0, 0],
+            //         [0, 0, 0, 0, 0],
+            //         [0, 0, 0, 0, 0],
+            //         [0, 0, 0, 0, 0]
+            //     ])
+            // ],
             [
-                'name' => 'Both Diagonal Line',
-                'description' => 'Pattern description for both diagonal line.',
-                'pattern_data' => json_encode([
-                    [1, 0, 0, 0, 1],
-                    [0, 1, 0, 1, 0],
-                    [0, 0, 1, 0, 0],
-                    [0, 1, 0, 1, 0],
-                    [1, 0, 0, 0, 1]
-                ])
-            ],
-            [
-                'name' => 'Horizontal Line',
-                'description' => 'Pattern description for horizontal line.',
+                'name' => 'Full House',
+                'description' => 'Pattern description for Full House',
                 'pattern_data' => json_encode([
                     [1, 1, 1, 1, 1],
-                    [0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0]
+                    [1, 1, 1, 1, 1],
+                    [1, 1, 1, 1, 1],
+                    [1, 1, 1, 1, 1],
+                    [1, 1, 1, 1, 1]
                 ])
             ],
             // Add more patterns as needed
