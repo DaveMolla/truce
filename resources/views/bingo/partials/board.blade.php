@@ -22,7 +22,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-right: 300px;
+            /* margin-right: 00px; */
         }
 
         .display-panel {
