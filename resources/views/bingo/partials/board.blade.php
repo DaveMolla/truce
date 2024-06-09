@@ -108,6 +108,7 @@
         }
 
         @media (max-width: 480px) {
+
             .bingo-pattern th,
             .bingo-pattern td {
                 width: 1.2rem;
@@ -288,9 +289,9 @@
                 </form>
                 <div class="button-container">
                     <button id="shuffleButton" class="btn">Shuffle</button>
-                    <form action="{{ route('bingo.end') }}" method="POST">
+                    <form action="{{ route('bingo.end') }}" method="POST" id="end-game-form">
                         @csrf
-                        <button type="submit" class="btn-end">End Game</button>
+                        <button type="button" class="btn-end" onclick="confirmEndGame()">End Game</button>
                     </form>
                 </div>
 
@@ -315,6 +316,15 @@
             var modal = document.getElementById("myModal");
             var btn = document.querySelector(".btn-check");
             var span = document.getElementsByClassName("close")[0];
+
+            window.confirmEndGame = function() {
+                var response = confirm('Are you sure you want to end the game?');
+                if (response) {
+                    document.getElementById('end-game-form').submit();
+                } else {
+                    console.log('Game end canceled by user.');
+                }
+            }
 
             // Display modal on button click
             btn.onclick = function() {
