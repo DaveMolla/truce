@@ -11,6 +11,9 @@
             display: grid;
             grid-template-columns: repeat(10, 1fr);
             gap: 0.1rem;
+            height: 750px;
+            width: 750px;
+            margin-right: 15px;
         }
 
         .number-grid button {
@@ -29,11 +32,11 @@
         }
 
         .pattern-display {
-            background-color: #fff;
+            /* background-color: #fff; */
             width: 220px;
             border-collapse: collapse;
-            margin-right: 200px;
-            margin-top: -500px;
+            margin-right: -600px;
+            margin-top: 200px;
         }
 
         .pattern-grid table {
@@ -43,6 +46,7 @@
 
         .pattern-grid th,
         .pattern-grid td {
+            background-color: #fff;
             border: 3px solid #014576;
             width: 2rem;
             height: 2rem;
@@ -70,7 +74,7 @@
             border-radius: 50%;
             margin: auto;
         }
-         .pattern-grid th:nth-child(2) {
+        .pattern-grid th:nth-child(2) {
             background-color: #014576;
         }
 
@@ -85,15 +89,13 @@
         .pattern-grid th:nth-child(5) {
             background-color: #014576;
         }
-        .caller_language:hover
-        {
+        .caller_language:hover {
             background-color: #014576;
         }
     </style>
 </head>
 
-<body class="bg-gray-800">
-
+<body class="bg-gray-800" style="margin-right: 500px">
     <div class="min-h-screen flex items-center justify-center">
         <div class="bg-gray-500 w-64 p-4">
             <h1 class="text-3xl font-bold mb-6">Truce Bingo</h1>
@@ -113,106 +115,108 @@
             </nav>
         </div>
         <!-- Main content -->
-        <div class="p-10 w-full max-w-6xl mx-auto">
-            <div class="grid grid-cols-12 gap-4">
-
-                {{-- @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif --}}
-                <!-- First column (8 columns) -->
-                <div class="col-span-12 md:col-span-8">
-                    <form method="POST" action="{{ route('branch.game-page') }}">
-                        @csrf
-
-                        @if ($errors->any())
-                        <div class="text-red-500 alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label for="bet_amount" class="block mb-2 text-sm font-medium text-white">Bet
-                                    amount</label>
-                                <input type="text" id="bet_amount" name="bet_amount"
-                                    class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5 placeholder-gray-400"
-                                    placeholder="Enter bet amount">
-                            </div>
-
-                            <div>
-                                <label for="winning_pattern" class="block mb-2 text-sm font-medium text-white">Winning
-                                    pattern</label>
-                                <select id="winning_pattern" name="winning_pattern"
-                                    class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5">
-                                    @foreach ($winningPatterns as $pattern)
-                                        <option value="{{ $pattern->id }}" data-pattern="{{ $pattern->pattern_data }}">
-                                            {{ $pattern->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label for="call_speed" class="block mb-2 text-sm font-medium text-white">Call
-                                    speed</label>
-                                <select id="call_speed" name="call_speed"
-                                    class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5">
-                                    <option value="very_fast">Very Fast (3s)</option>
-                                    <option value="fast">Fast (5s)</option>
-                                    <!-- Add more options as needed -->
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="caller_language" class="block mb-2 text-sm font-medium text-white">Caller
-                                    language</label>
-                                <select id="caller_language" name="caller_language"
-                                    class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5">
-                                    <option value="english_female_very_fast">English Female Very Fast</option>
-                                    <option value="english_female_fast">English Female Fast</option>
-                                    <!-- Add more options as needed -->
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="number-grid mb-5">
-                            @foreach ($bingoCards as $card)
-                                <button type="button" class="number-button" data-card-id="{{ $card->id }}">
-                                    {{ $card->id }}
-                                </button>
-                            @endforeach
-                        </div>
-
-                        <input type="hidden" name="selected_numbers" id="selected_numbers">
-                        <input type="hidden" name="number_of_selected_numbers" id="number_of_selected_numbers">
-                        <input type="hidden" name="total_amount" id="total_amount">
-
-                        <button type="submit" style="background-color: #019DD6;"
-                            class="w-full text-gray-100 font-bold py-2 px-4 rounded">
-                            Create Game
+        <div class="p-10 w-full max-w-6xl mx-auto flex">
+            <!-- Number Grid (Bingo Cards) -->
+            <div class="w-2/3">
+                <div class="number-grid mb-5">
+                    @foreach ($bingoCards as $card)
+                        <button type="button" class="number-button" data-card-id="{{ $card->id }}">
+                            {{ $card->id }}
                         </button>
-                    </form>
+                    @endforeach
                 </div>
+            </div>
 
-                <!-- Second column (4 columns) -->
+            <!-- Input Fields and Pattern Display -->
+            <div class="w-1/3 pl-10">
+                <form method="POST" action="{{ route('branch.game-page') }}">
+                    @csrf
 
+
+
+                    <div class="grid gap-4 mb-4" style="margin-top: 100px; margin-left: 10px;margin-right: 10px;">
+                        @if ($errors->any())
+                            <div class="text-red-500 alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-white">Bingo Type</label>
+                            <input type="text"
+                                class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5 placeholder-gray-400"
+                                placeholder="75 Bingo" style="width: 480px" disabled>
+                        </div>
+                        <div>
+                            <label for="bet_amount" class="block mb-2 text-sm font-medium text-white">Bet amount</label>
+                            <input type="text" id="bet_amount" name="bet_amount"
+                                class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5 placeholder-gray-400"
+                                placeholder="Enter bet amount" style="width: 480px">
+                        </div>
+
+                        <div>
+                            <label for="winning_pattern" class="block mb-2 text-sm font-medium text-white">Winning
+                                pattern</label>
+                            <select id="winning_pattern" name="winning_pattern"
+                                class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5">
+                                @foreach ($winningPatterns as $pattern)
+                                    <option value="{{ $pattern->id }}" data-pattern="{{ $pattern->pattern_data }}">
+                                        {{ $pattern->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid gap-4 mb-4" style="margin-left: 10px;margin-right: 10px;">
+                        <div>
+                            <label for="call_speed" class="block mb-2 text-sm font-medium text-white">Call speed</label>
+                            <select id="call_speed" name="call_speed"
+                                class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5">
+                                <option value="very_fast">Very Fast (3s)</option>
+                                <option value="fast">Fast (5s)</option>
+                                <!-- Add more options as needed -->
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="caller_language" class="block mb-2 text-sm font-medium text-white">Caller
+                                language</label>
+                            <select id="caller_language" name="caller_language"
+                                class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5">
+                                <option value="english_female_very_fast">English Female Very Fast</option>
+                                <option value="english_female_fast">English Female Fast</option>
+                                <!-- Add more options as needed -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="selected_numbers" id="selected_numbers">
+                    <input type="hidden" name="number_of_selected_numbers" id="number_of_selected_numbers">
+                    <input type="hidden" name="total_amount" id="total_amount">
+
+                    <button type="submit" style="background-color: #019DD6;"
+                        class="w-full text-gray-100 font-bold py-2 px-4 rounded mt-4" style="margin-right: 100px">
+                        Create Game
+                    </button>
+                </form>
+
+                <button id="reset-button" class="w-full text-gray-100 font-bold py-2 px-4 rounded mt-4" style="background-color: red;">Reset Board</button>
+            </div>
+            <div class="pattern-display mt-6" style="text-align: center;">
+                <div class="pattern-grid" id="pattern_grid">
+                    <!-- The pattern grid will be generated here -->
+                </div>
             </div>
         </div>
-        <div class="pattern-display">
+
+        {{-- <div class="pattern-display mt-6">
             <div class="pattern-grid" id="pattern_grid">
                 <!-- The pattern grid will be generated here -->
             </div>
-        </div>
+        </div> --}}
 
     </div>
 
@@ -226,6 +230,8 @@
             const winningPatternSelect = document.getElementById('winning_pattern');
             const totalAmountInput = document.getElementById('total_amount');
             const patternGrid = document.getElementById('pattern_grid');
+            const resetButton = document.getElementById('reset-button');
+
             let selectedNumbers = [];
 
             function updateTotalAmount() {
@@ -276,7 +282,8 @@
                         const td = document.createElement('td');
                         const div = document.createElement('div');
                         if (cell || (rowIndex === 2 && cellIndex === 2)) {
-                            div.className = (rowIndex === 2 && cellIndex === 2) ? 'free-spot' : 'circle';
+                            div.className = (rowIndex === 2 && cellIndex === 2) ?
+                                'free-spot' : 'circle';
                         }
                         td.appendChild(div);
                         tr.appendChild(td);
@@ -285,6 +292,16 @@
                 });
 
                 patternGrid.appendChild(table);
+            });
+
+            resetButton.addEventListener('click', function() {
+                selectedNumbers = [];
+                numberButtons.forEach(button => {
+                    button.classList.remove('selected');
+                });
+                selectedNumbersInput.value = '';
+                numberOfSelectedNumbersInput.value = 0;
+                updateTotalAmount(); // Reset total amount
             });
 
             // Trigger change event to load the default pattern on page load

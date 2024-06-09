@@ -23,7 +23,7 @@ class CreateGameRequest extends FormRequest
     {
         return [
             'bet_amount' => 'required|numeric|min:1',
-            // 'selected_numbers' => 'required|array|min:1',
+            'selected_numbers' => 'required|min:1',
             'call_speed' => 'required|string|in:very_fast,fast',
             'caller_language' => 'required|string|in:english_female_very_fast,english_female_fast',
             'winning_pattern' => 'required|exists:winning_patterns,id',

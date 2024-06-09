@@ -14,7 +14,7 @@ class BingoController extends Controller
 {
     public function index()
     {
-        
+
         $callHistory = Session::get('callHistory', []);
         $totalCalls = count($callHistory);
         $currentCall = end($callHistory);
@@ -48,10 +48,12 @@ class BingoController extends Controller
             $callHistory[] = $newNumber;
             Session::put('callHistory', $callHistory);
         }
-        // sleep(1);
 
-
-        return redirect()->route('bingo.index');
+        return response()->json([
+            'number' => $newNumber,
+            'totalCalls' => count($callHistory),
+            'callHistory' => $callHistory
+        ]);
     }
 
     private function getUniqueNumber($callHistory)
