@@ -85,59 +85,103 @@ class BingoController extends Controller
         return redirect()->route('branch.dashboard');
     }
 
-    public function checkBoard(Request $request)
-    {
-        $cardNumber = $request->input('name');
-        $callHistory = Session::get('callHistory', []);
-        $winningPatterns = Session::get('winning_pattern', []);
-        $totalCalls = count($callHistory);
-        $currentCall = end($callHistory);
-        $gameId = Session::get('gameId');
-        $winningPatterns = Session::get('winning_pattern', []);
-        $availableNumbers = array_diff(range(1, 75), $callHistory);
-        $numbersAvailable = !empty($availableNumbers);
-        $branchUser = Auth::user();
+    // public function checkBoard(Request $request)
+    // {
+    //     $cardNumber = $request->input('name');
+    //     $callHistory = Session::get('callHistory', []);
+    //     $winningPatterns = Session::get('winning_pattern', []);
+    //     $totalCalls = count($callHistory);
+    //     $currentCall = end($callHistory);
+    //     $gameId = Session::get('gameId');
+    //     $winningPatterns = Session::get('winning_pattern', []);
+    //     $availableNumbers = array_diff(range(1, 75), $callHistory);
+    //     $numbersAvailable = !empty($availableNumbers);
+    //     $branchUser = Auth::user();
 
-        $game = Game::find($gameId);
-        $totalBetAmount = $game->total_bet_amount;
-        $profit = $game->profit;
+    //     $game = Game::find($gameId);
+    //     $totalBetAmount = $game->total_bet_amount;
+    //     $profit = $game->profit;
 
-        $winningAmount = $totalBetAmount - $profit;
+    //     $winningAmount = $totalBetAmount - $profit;
 
-        $winningP = WinningPattern::find($winningPatterns);
-        // dd($winningP);
-        $win = $winningP->pattern_data;
+    //     $winningP = WinningPattern::find($winningPatterns);
+    //     // dd($winningP);
+    //     $win = $winningP->pattern_data;
 
-        if (is_string($win)) {
-            $win = json_decode($win, true);
-        }
+    //     if (is_string($win)) {
+    //         $win = json_decode($win, true);
+    //     }
 
-        if (!is_array($win)) {
-            $win = [];
-        }
+    //     if (!is_array($win)) {
+    //         $win = [];
+    //     }
 
-        $selectedNumbers = Session::get('selected_numbers', []);
-        $availableNumbers = array_diff(range(1, 75), $callHistory);
-        $numbersAvailable = !empty($availableNumbers);
+    //     $selectedNumbers = Session::get('selected_numbers', []);
+    //     $availableNumbers = array_diff(range(1, 75), $callHistory);
+    //     $numbersAvailable = !empty($availableNumbers);
 
-        $bingoCard = BingoCard::find($cardNumber);
+    //     $bingoCard = BingoCard::find($cardNumber);
 
-        if (!$bingoCard) {
-            return redirect()->back()->withErrors(['The card number is not selected for this game.']);
-        }
-        $boardNumbers = json_decode($bingoCard->card_data, true);
+    //     if (!$bingoCard) {
+    //         return redirect()->back()->withErrors(['The card number is not selected for this game.']);
+    //     }
+    //     $boardNumbers = json_decode($bingoCard->card_data, true);
 
-        $isWinningPattern = false;
-        foreach ($win as $pattern) {
-            // dd($pattern);
-            if (is_array($pattern) && count(array_intersect($callHistory, $pattern)) === count($pattern)) {
-                $isWinningPattern = true;
-                break;
-            }
-        }
-        // dd($win);
+    //     $isWinningPattern = false;
+    //     foreach ($win as $pattern) {
+    //         // dd($pattern);
+    //         if (is_array($pattern) && count(array_intersect($callHistory, $pattern)) === count($pattern)) {
+    //             $isWinningPattern = true;
+    //             break;
+    //         }
+    //     }
+    //     // dd($win);
 
-        return view('bingo.index', compact('callHistory', 'totalCalls', 'currentCall', 'winningPatterns', 'winningAmount', 'numbersAvailable', 'boardNumbers', 'isWinningPattern', 'cardNumber', 'win', 'branchUser'));
+    //     return view('bingo.index', compact('callHistory', 'totalCalls', 'currentCall', 'winningPatterns', 'winningAmount', 'numbersAvailable', 'boardNumbers', 'isWinningPattern', 'cardNumber', 'win', 'branchUser'));
+    // }
+
+    public function checkCard(Request $request)
+{
+    $cardId = $request->input('card_id');
+    $card = BingoCard::find($cardId);
+
+    // Fetch called numbers from session or other storage
+    $calledNumbers = session('callHistory', []);
+
+    if ($card) {
+        return back()->with([
+            'show_modal' => true,
+            'card_data' => json_decode($card->card_data),
+            'called_numbers' => $calledNumbers
+        ]);
+    } else {
+        return back()->with([
+            'show_modal' => true,
+            'card_data' => null,
+            'called_numbers' => $calledNumbers
+        ]);
     }
+}
+
+
+
+    public function fetchCard(Request $request)
+    {
+        $cardId = $request->input('card_id');
+        $card = BingoCard::find($cardId);
+
+        if ($card) {
+            return response()->json([
+                'success' => true,
+                'card' => $card
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Card not found'
+            ]);
+        }
+    }
+
 
 }

@@ -6,7 +6,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Let's Play Bingo!</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    @vite('resources/css/app.css')
+
     <style>
+        .bingo-card-table {
+            width: 600px;
+            /* Full width of the container */
+            border-collapse: collapse;
+            /* Collapses the border between cells */
+            margin-top: 20px;
+            /* Space above the table */
+            background-color: #f8f9fa;
+            /* Light grey background */
+            align-items: center;
+            margin-left: 600px;
+            height: 500px;
+        }
+
+        .bingo-card-table th {
+            background-color: #007bff;
+            /* Blue background for headers */
+            color: white;
+            /* White text color */
+            font-weight: bold;
+            /* Bold font for headers */
+            padding: 12px;
+            /* Padding inside the header cells */
+            border: 1px solid #dee2e6;
+            /* Light grey border */
+        }
+
+        .bingo-card-table td {
+            text-align: center;
+            /* Center-align text */
+            padding: 10px;
+            /* Padding inside cells */
+            border: 1px solid #dee2e6;
+            /* Light grey border */
+            background-color: #ffffff;
+            /* White background for cells */
+            color: black;
+        }
+
+        .bingo-card-table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+            /* Zebra striping for rows */
+        }
+
+        .bingo-card-table tbody tr:hover {
+            background-color: #ddd;
+            /* Hover effect for rows */
+        }
+
+        .bingo-card-table td.called {
+            background-color: #007bff;
+            /* Blue background for called numbers */
+            color: white;
+            /* White text for better visibility */
+        }
+
         .flex-container {
             display: flex;
             align-items: flex-start;
@@ -97,7 +155,7 @@
             }
 
             .bingo-pattern .circle {
-                width: 1.2rem;
+                width: 1.8rem;
                 height: 1.2rem;
             }
 
@@ -127,7 +185,7 @@
     {{-- <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}"></head> --}}
 
 <body>
-    <div class="main-container">
+    <div class="main-container" style="background-color: #232223">
 
         <table class="bingo-table">
             <tbody>
@@ -226,7 +284,7 @@
     </div>
 
     <!-- Add last five calls display below the table -->
-    <div class="flex-container">
+    <div class="flex-container" style="background-color: #232223">
         <div class="last-five-calls">
             @php
                 $lastFiveCalls = array_slice($callHistory, -6);
@@ -265,30 +323,102 @@
                 </div>
             </span>
             <div class="buttons">
-                {{-- <div id="countdown-display" class="text-white mt-4"></div> --}}
                 <form action="{{ route('bingo.check') }}" method="POST">
                     @csrf
                     <div class="input-group">
-                        <input type="text" id="name" name="name" placeholder="Check Number" required>
-                        <button type="button" class="btn-check">Check</button>
+                        <input type="text" id="cardId" name="card_id" placeholder="Check Card ID" required>
+                        <button type="submit" class="btn-check">Check</button>
                     </div>
+                </form>
 
-                    <!-- Modal Structure -->
-                    <div id="myModal" class="modal">
-                        <div class="modal-content">
-                            <span class="close">&times;</span>
-                            <p id="modal-text">Number check result will appear here.</p>
+
+                <!-- Modal Structure -->
+                <!-- Modal Structure -->
+                @if (session('show_modal'))
+                    <div id="check-number" tabindex="-1" aria-hidden="true"
+                        class="fixed inset-0 z-50 flex items-center justify-center w-full h-full">
+                        <div class="relative p-4 w-full max-w-3xl h-auto">
+                            <div class="relative bg-white rounded-lg shadow">
+                                <div class="flex justify-between items-center p-5 rounded-t border-b">
+                                    <h3 class="text-xl font-medium text-gray-900">Check Card</h3>
+                                    <button type="button"
+                                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+                                        onclick="document.getElementById('check-number').style.display='none';">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="p-6 space-y-6">
+                                    @if (session('card_data'))
+                                        <table class="bingo-card-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="background-color: #3B82F6">B</th>
+                                                    <th style="background-color: #EF4444">I</th>
+                                                    <th style="background-color: #F97316">N</th>
+                                                    <th style="background-color: #22C55E">G</th>
+                                                    <th style="background-color: #EAB308">O</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (session('card_data') as $row)
+                                                    <tr>
+                                                        @foreach ($row as $cell)
+                                                            <td
+                                                                class="{{ in_array($cell, session('called_numbers', [])) ? 'called' : '' }}">
+                                                                {{ $cell }}
+                                                            </td>
+                                                        @endforeach
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    @else
+                                        <p class="text-base leading-relaxed text-gray-500">No card data found.</p>
+                                    @endif
+                                </div>
+
+                            </div>
                         </div>
                     </div>
+                @endif
 
-                </form>
+
+                <!-- Modal Toggle Script -->
+                <script>
+                    function toggleModal() {
+                        var modal = document.getElementById('check-number');
+                        modal.classList.toggle('hidden');
+                    }
+                </script>
+
+
+                {{-- @if (session('modal'))
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var modal = document.getElementById('myModal');
+                            document.getElementById('modal-text').textContent = "{{ session('modal') }}";
+                            modal.style.display = "block";
+
+                            window.onclick = function(event) {
+                                if (event.target == modal) {
+                                    modal.style.display = 'none';
+                                }
+                            }
+                        });
+                    </script>
+                @endif --}}
+
                 <form action="{{ route('bingo.call') }}" method="POST" id="call-form">
                     @csrf
-                    <button type="submit" class="btn" id="next-number-btn" {{ $numbersAvailable }}>Start
+                    <button type="submit" class="btn-start" id="next-number-btn" {{ $numbersAvailable }}>Start
                         Calling</button>
                 </form>
                 <div class="button-container">
-                    <button id="shuffleButton" class="btn">Shuffle</button>
+                    <button id="shuffleButton" class="btn-shuffle">Shuffle</button>
                     <form action="{{ route('bingo.end') }}" method="POST" id="end-game-form">
                         @csrf
                         <button type="button" class="btn-end" onclick="confirmEndGame()">End Game</button>
@@ -313,9 +443,34 @@
             const countdownDisplay = document.getElementById('countdown-display');
             const shuffleButton = document.getElementById('shuffleButton');
             const shuffleSound = new Audio('audios/Shuffle.mp3');
-            var modal = document.getElementById("myModal");
-            var btn = document.querySelector(".btn-check");
-            var span = document.getElementsByClassName("close")[0];
+
+
+            //             function setModalData() {
+            //     var cardId = document.getElementById('cardId').value;
+
+            //     fetch("{{ route('bingo.check') }}", {
+            //         method: 'POST',
+            //         headers: {
+            //             'Content-Type': 'application/json',
+            //             'X-CSRF-Token': "{{ csrf_token() }}"
+            //         },
+            //         body: JSON.stringify({ card_id: cardId })
+            //     })
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         document.getElementById('modal-text').textContent = "Card Data: " + data.card_data;
+            //         document.getElementById('myModal').style.display = "block";
+            //     })
+            //     .catch(error => console.error('Error:', error));
+            // }
+
+            // Close modal on clicking outside of the modal content
+            window.onclick = function(event) {
+                if (event.target == document.getElementById('myModal')) {
+                    document.getElementById('myModal').style.display = "none";
+                }
+            };
+
 
             window.confirmEndGame = function() {
                 var response = confirm('Are you sure you want to end the game?');
@@ -326,24 +481,24 @@
                 }
             }
 
-            // Display modal on button click
-            btn.onclick = function() {
-                var inputVal = document.getElementById("name").value;
-                document.getElementById("modal-text").textContent = "Checking number: " + inputVal;
-                modal.style.display = "block";
-            }
+            // // Display modal on button click
+            // btn.onclick = function() {
+            //     var inputVal = document.getElementById("name").value;
+            //     document.getElementById("modal-text").textContent = "Checking number: " + inputVal;
+            //     modal.style.display = "block";
+            // }
 
-            // Close the modal when the close button is clicked
-            span.onclick = function() {
-                modal.style.display = "none";
-            }
+            // // Close the modal when the close button is clicked
+            // span.onclick = function() {
+            //     modal.style.display = "none";
+            // }
 
-            // Close the modal when clicking outside of the modal content
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = "none";
-                }
-            }
+            // // Close the modal when clicking outside of the modal content
+            // window.onclick = function(event) {
+            //     if (event.target == modal) {
+            //         modal.style.display = "none";
+            //     }
+            // }
 
             shuffleButton.addEventListener('click', function() {
                 shuffleSound.play();

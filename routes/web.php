@@ -70,12 +70,15 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
 
     Route::get('branch/report', [BranchController::class, 'showReport'])->name('branch.report');
-    Route::post('branch/check', [BingoController::class, 'checkBoard'])->name('bingo.check');
+    Route::post('/bingo/check', [BingoController::class, 'checkCard'])->name('bingo.check');
 
 
-    Route::get('/bingo', [BingoController::class,'index'])->name('bingo.index');
-    Route::post('/bingo/call', [BingoController::class,'callNextNumber'])->name('bingo.call');
-    Route::post('/bingo/reset', [BingoController::class,'resetBoard'])->name('bingo.reset');
-    Route::post('/bingo/end', [BingoController::class,'endGame'])->name('bingo.end');
+    Route::get('bingo', [BingoController::class,'index'])->name('bingo.index');
+    Route::post('bingo/call', [BingoController::class,'callNextNumber'])->name('bingo.call');
+    Route::post('bingo/reset', [BingoController::class,'resetBoard'])->name('bingo.reset');
+    Route::post('bingo/end', [BingoController::class,'endGame'])->name('bingo.end');
+
+    // Route::post('fetch-card', [BingoController::class,'fetchCard'])->name('fetch.card');
+
 
 });

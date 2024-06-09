@@ -1,11 +1,11 @@
-body {
+/* body {
     font-family: 'Arial', sans-serif;
     background-color: #232223;
     color: #fff;
     margin: 0;
     padding: 20px;
     text-align: center;
-}
+} */
 
 header h1 {
     color: #1e7c6b;
@@ -83,9 +83,9 @@ header h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size: 20px;
+    font-size: 25px;
     font-weight: bold;
-    margin-left: 15px;
+    /* margin-left: 15px; */
 }
 .control-panel .winning-amount {
     display: flex;
@@ -132,10 +132,10 @@ header h1 {
     border-radius: 20px;
     /* margin-top: 20px; */
     padding: 10px;
-    font-size: 40px;
+    font-size: 60px;
     font-weight: bold;
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -167,7 +167,7 @@ header h1 {
     border-radius: 4px;
 }
 
-.btn,
+.btn-start,.btn-shuffle,
 .btn-check {
     background-color: #019DD6;
     border: none;
@@ -179,10 +179,19 @@ header h1 {
     font-weight: bold;
 
 }
-.btn{
+.btn-start{
     padding-left: 31px;
     padding-right: 31px;
     margin-top: 10px;
+    align-items: center;
+    margin-left: 100px;
+}
+
+.btn-shuffle{
+    padding-left: 31px;
+    padding-right: 31px;
+    margin-top: 10px;
+    align-items: center;
 }
 
 .button-container {
@@ -191,7 +200,7 @@ header h1 {
     align-items: center;
     gap: 10px;
     margin-top: 5px;
-    margin-left: 15px;
+    margin-left: 60px;
 }
 
 .btn-end {
@@ -242,8 +251,8 @@ header h1 {
 }
 
 .previous-number {
-    width: 180px;
-    height: 180px;
+    width: 200px;
+    height: 200px;
     background-color: white;
     border-radius: 100%;
     display: flex;
@@ -255,13 +264,15 @@ header h1 {
     transition: all 0.3s ease;
     border: 10px solid;
     position: relative;
+    margin-bottom: 42px;
 }
 
 .previous-number.current-call {
-    width: 230px;
-    height: 230px;
+    width: 270px;
+    height: 270px;
     font-size: 80px;
     border-width: 20px;
+    margin-bottom: 42px;
 }
 
 .previous-number::after {
@@ -277,50 +288,11 @@ header h1 {
 }
 
 .previous-number span {
-    display: block;
+    /* display: block; */
     text-align: center;
     font-weight: bold;
 }
 
-
-/* Modal (background) */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-/* Modal Content */
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-    /* opacity: 0.5; */
-}
-
-/* The Close Button */
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
 
 
 .ball-blue {
@@ -396,10 +368,6 @@ header h1 {
         height: 70px;
     }
 
-    .control-panel .total-calls,
-    .control-panel .previous-call {
-        font-size: 18px;
-    }
 
 
     /* .btn,
@@ -450,10 +418,10 @@ header h1 {
         height: 50px;
     }
 
-    .control-panel .total-calls,
+    /* .control-panel .total-calls,
     .control-panel .previous-call {
-        font-size: 15px;
-    }
+        font-size: 150px;
+    } */
 
     /* .btn,
     .btn-end {
