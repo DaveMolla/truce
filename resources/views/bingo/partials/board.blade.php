@@ -486,6 +486,8 @@
             let intervalId;
             let isRunning = false;
             let totalCalls = {{ $totalCalls }}; // Fetch total calls from the server-side
+            let isFetching = false; // Flag to indicate if a number fetch is in progress
+
 
             const nextNumberBtn = document.getElementById('next-number-btn');
             const countdownDisplay = document.getElementById('countdown-display');
@@ -540,25 +542,34 @@
                 shuffleSound.play();
             });
 
+
             function startCalling() {
-                intervalId = setInterval(() => {
-                    if (totalCalls >= 75) {
-                        pauseCalling();
-                        alert('Maximum number of calls reached.');
-                        return;
-                    }
-                    countdown -= 1;
-                    countdownDisplay.textContent = `${countdown}s`;
-                    if (countdown <= 0) {
-                        fetchNextNumber();
-                    }
-                }, 1000);
-                isRunning = true;
-                nextNumberBtn.textContent = 'Pause';
+                if (!intervalId) { // Ensure that no interval is running before starting a new one
+                    intervalId = setInterval(() => {
+                        if (totalCalls >= 75) {
+                            pauseCalling();
+                            alert('Maximum number of calls reached.');
+                            return;
+                        }
+                        if (countdown > 0) {
+                            countdown -= 1;
+                            countdownDisplay.textContent = `${countdown}s`;
+                        }
+                        if (countdown <= 0 && !
+                            isFetching) { // Only fetch next number if not already fetching
+                            fetchNextNumber();
+                        }
+                    }, 1000);
+                    isRunning = true;
+                    nextNumberBtn.textContent = 'Pause';
+                }
             }
 
             function pauseCalling() {
-                clearInterval(intervalId);
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    intervalId = null; // Clear the interval ID
+                }
                 isRunning = false;
                 nextNumberBtn.textContent = 'Start';
             }
@@ -589,24 +600,28 @@
             });
 
             async function fetchNextNumber() {
-                const response = await fetch("{{ route('bingo.call') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                });
-                const data = await response.json();
-                const newNumber = data.number;
-                totalCalls = data.totalCalls;
-                updateBoard(data.callHistory);
-                updateCallDisplay(data.callHistory); // Make sure this function exists and is correct
+                if (!isFetching) {
+                    isFetching = true; // Set flag to true to indicate fetch in progress
+                    const response = await fetch("{{ route('bingo.call') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+                    const data = await response.json();
+                    const newNumber = data.number;
+                    totalCalls = data.totalCalls;
+                    updateBoard(data.callHistory);
+                    updateCallDisplay(data.callHistory);
 
-                if (newNumber !== null) {
-                    const audio = new Audio(`/audios/${newNumber}.mp3`);
-                    audio.play();
+                    if (newNumber !== null) {
+                        const audio = new Audio(`/audios/${newNumber}.mp3`);
+                        audio.play();
+                    }
+                    resetCountdown(); // Reset the countdown after fetching the number
+                    isFetching = false; // Reset flag after fetch completes
                 }
-                resetCountdown(); // Reset the countdown after fetching the number
             }
 
             function updateBoard(callHistory) {
