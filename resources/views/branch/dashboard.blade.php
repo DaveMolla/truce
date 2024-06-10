@@ -92,6 +92,18 @@
         .caller_language:hover {
             background-color: #014576;
         }
+        @media (max-width: 600px) {
+            .number-grid {
+                grid-template-columns: repeat(5, 1fr);
+                /* Reduce the number of columns on small screens */
+                height: 80vw;
+                width: 80vw;
+            }
+
+            .number-grid button {
+                font-size: 2vw;
+            }
+        }
     </style>
 </head>
 
