@@ -12,6 +12,7 @@ use App\Models\WinningPattern;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Session;
@@ -144,7 +145,9 @@ class BranchController extends Controller
         if ($user->role === 'branch') {
             $bingoCards = BingoCard::all();
             $winningPatterns = WinningPattern::all();
-            return view('branch.dashboard', compact('bingoCards', 'winningPatterns'));
+            $selectedCardIds = session('selected_card_ids', []);  // Retrieve from session
+
+            return view('branch.dashboard', compact('bingoCards', 'winningPatterns', 'selectedCardIds'));
         }
         return redirect()->back();
     }
@@ -291,6 +294,17 @@ class BranchController extends Controller
             $branch_user->update([
                 'current_balance' => $user_balance - $profit,
             ]);
+            $selectedNumbers = explode(',', $request->input('selected_numbers'));
+            session(['selected_numbers' => $selectedNumbers]);
+            session([
+                'gameId' => $game->id,
+                'game_setup' => [
+                    'bet_amount' => $request->bet_amount,
+                    'winning_pattern' => $request->winning_pattern,
+                    'call_speed' => $request->call_speed,
+                    'caller_language' => $request->caller_language,
+                ]
+            ]);
             Session::forget('callHistory');
             // dd($selectedNumbers);
 
@@ -354,8 +368,17 @@ class BranchController extends Controller
             $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
             $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
 
-            $games = Game::whereBetween('created_at', [$startDate, $endDate])->get();
-            $totalProfit = $games->sum('profit');
+            $games = Game::select(
+                DB::raw('date(created_at) as game_date,
+                     sum(profit) as total_profit')
+            )
+                ->where('branch_user_id', $branchUser->id)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->groupBy(DB::raw('date(created_at)'))
+                ->orderBy('game_date', 'desc')
+                ->paginate(10);
+
+            $totalProfit = $games->sum('total_profit');
 
             return view('branch.report', compact('games', 'totalProfit', 'startDate', 'endDate', 'branchUser'));
         }

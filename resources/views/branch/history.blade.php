@@ -85,7 +85,7 @@
                     @foreach ($recentGames as $game)
                         <tr>
                             <td class="border px-4 py-2">{{ $rowNumber++ }}</td>
-                            <td class="border px-4 py-2">{{ $game->created_at->format('l, F j, Y g:i A') }}</td>
+                            <td class="border px-4 py-2">{{ $game->created_at->setTimezone('Africa/Addis_Ababa')->format('l, F j, Y g:i A') }}</td>
                             <td class="border px-4 py-2">{{ $game->bet_amount }}</td>
                             <td class="border px-4 py-2">{{ $game->total_players }}</td>
                             <td class="border px-4 py-2">{{ $game->total_calls }}</td>

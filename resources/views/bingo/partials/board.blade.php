@@ -9,6 +9,18 @@
     @vite('resources/css/app.css')
 
     <style>
+        .winning-pattern-images {
+            position: relative;
+            max-width: 100%;
+        }
+
+        .winning-pattern-images .slide {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+
         .bingo-card-table {
             width: 90%;
             /* Full width of the container */
@@ -110,7 +122,7 @@
         }
 
         .bingo-pattern {
-            background-color: #fff;
+            background-color: #232223;
             width: 270px;
             height: 270px;
             max-width: 300px;
@@ -270,19 +282,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($win as $rowIndex => $row)
-                            <tr>
-                                @foreach ($row as $cellIndex => $cell)
-                                    <td>
-                                        @if ($rowIndex == 2 && $cellIndex == 2)
-                                            <div class="free-spot"></div>
-                                        @elseif ($cell)
-                                            <div class="circle"></div>
-                                        @endif
-                                    </td>
-                                @endforeach
-                            </tr>
-                        @endforeach
+
+                        <div id="slideshow-container" class="winning-pattern-images">
+                            @foreach ($winningPattern->images as $image)
+                                <img src="{{ asset($image->image_path) }}" class="slide" style="display: none;"
+                                    alt="Winning Pattern Image">
+                            @endforeach
+                        </div>
 
                     </tbody>
                 </table>
@@ -374,11 +380,15 @@
                                             <thead>
                                                 <div class="message">
                                                     @if (session('has_won'))
-                                                        <p class="text-green-500">Card {{ session('card_id') }} -> ዘግቷል!</p>
-                                                        <audio id="success-audio" src="{{ asset('audios/win.mp3') }}" autoplay></audio>
+                                                        <p class="text-green-500">Card {{ session('card_id') }} ->
+                                                            ዘግቷል!</p>
+                                                        <audio id="success-audio" src="{{ asset('audios/win.mp3') }}"
+                                                            autoplay></audio>
                                                     @else
-                                                        <p class="text-red-500">Card {{ session('card_id') }} -> አልዘጋም!</p>
-                                                        <audio id="fail-audio" src="{{ asset('audios/not-win.mp3') }}" autoplay></audio>
+                                                        <p class="text-red-500">Card {{ session('card_id') }} -> አልዘጋም!
+                                                        </p>
+                                                        <audio id="fail-audio" src="{{ asset('audios/not-win.mp3') }}"
+                                                            autoplay></audio>
                                                     @endif
                                                 </div>
 
@@ -481,26 +491,22 @@
             const countdownDisplay = document.getElementById('countdown-display');
             const shuffleButton = document.getElementById('shuffleButton');
             const shuffleSound = new Audio('audios/Shuffle.mp3');
+            const slides = document.querySelectorAll('#slideshow-container .slide');
+            let currentSlide = 0;
 
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    slide.style.display = (i === index) ? 'block' : 'none';
+                });
+            }
 
-            //             function setModalData() {
-            //     var cardId = document.getElementById('cardId').value;
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }
 
-            //     fetch("{{ route('bingo.check') }}", {
-            //         method: 'POST',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //             'X-CSRF-Token': "{{ csrf_token() }}"
-            //         },
-            //         body: JSON.stringify({ card_id: cardId })
-            //     })
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         document.getElementById('modal-text').textContent = "Card Data: " + data.card_data;
-            //         document.getElementById('myModal').style.display = "block";
-            //     })
-            //     .catch(error => console.error('Error:', error));
-            // }
+            showSlide(currentSlide);
+            setInterval(nextSlide, 3000);
 
             window.addEventListener('DOMContentLoaded', (event) => {
                 const successAudio = document.getElementById('success-audio');
@@ -515,8 +521,8 @@
 
             // Close modal on clicking outside of the modal content
             window.onclick = function(event) {
-                if (event.target == document.getElementById('myModal')) {
-                    document.getElementById('myModal').style.display = "none";
+                if (event.target == document.getElementById('check-number')) {
+                    document.getElementById('check-number').style.display = "none";
                 }
             };
 
@@ -529,25 +535,6 @@
                     console.log('Game end canceled by user.');
                 }
             }
-
-            // // Display modal on button click
-            // btn.onclick = function() {
-            //     var inputVal = document.getElementById("name").value;
-            //     document.getElementById("modal-text").textContent = "Checking number: " + inputVal;
-            //     modal.style.display = "block";
-            // }
-
-            // // Close the modal when the close button is clicked
-            // span.onclick = function() {
-            //     modal.style.display = "none";
-            // }
-
-            // // Close the modal when clicking outside of the modal content
-            // window.onclick = function(event) {
-            //     if (event.target == modal) {
-            //         modal.style.display = "none";
-            //     }
-            // }
 
             shuffleButton.addEventListener('click', function() {
                 shuffleSound.play();

@@ -11,4 +11,9 @@ class WinningPattern extends Model
 
     protected $fillable = ['name', 'description', 'pattern_data'];
 
+    public function images()
+    {
+        return $this->hasMany(PatternImage::class);
+    }
+
 }

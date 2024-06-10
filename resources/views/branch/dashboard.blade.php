@@ -74,6 +74,7 @@
             border-radius: 50%;
             margin: auto;
         }
+
         .pattern-grid th:nth-child(2) {
             background-color: #014576;
         }
@@ -89,9 +90,11 @@
         .pattern-grid th:nth-child(5) {
             background-color: #014576;
         }
+
         .caller_language:hover {
             background-color: #014576;
         }
+
         @media (max-width: 600px) {
             .number-grid {
                 grid-template-columns: repeat(5, 1fr);
@@ -166,7 +169,8 @@
                             <label for="bet_amount" class="block mb-2 text-sm font-medium text-white">Bet amount</label>
                             <input type="text" id="bet_amount" name="bet_amount"
                                 class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5 placeholder-gray-400"
-                                placeholder="Enter bet amount" style="width: 480px">
+                                placeholder="Enter bet amount" style="width: 480px"
+                                value="{{ session('game_setup.bet_amount', '') }}" required>
                         </div>
 
                         <div>
@@ -215,7 +219,8 @@
                     </button>
                 </form>
 
-                <button id="reset-button" class="w-full text-gray-100 font-bold py-2 px-4 rounded mt-4" style="background-color: red;">Reset Board</button>
+                <button id="reset-button" class="w-full text-gray-100 font-bold py-2 px-4 rounded mt-4"
+                    style="background-color: red;">Reset Board</button>
             </div>
             <div class="pattern-display mt-6" style="text-align: center;">
                 <div class="pattern-grid" id="pattern_grid">
@@ -275,8 +280,23 @@
                 const selectedOption = this.options[this.selectedIndex];
                 const patternData = JSON.parse(selectedOption.dataset.pattern);
 
-                patternGrid.innerHTML = ''; // Clear existing grid
+                clearInterval(window.patternInterval);
 
+                if (selectedOption.text === 'All Common Patterns') {
+                    let patternIndex = 0;
+                    displayPattern(patternData[patternIndex]);
+
+                    window.patternInterval = setInterval(() => {
+                        patternIndex = (patternIndex + 1) % patternData.length;
+                        displayPattern(patternData[patternIndex]);
+                    }, 3000);
+                } else {
+                    displayPattern(patternData);
+                }
+            });
+
+            function displayPattern(pattern) {
+                patternGrid.innerHTML = '';
                 const table = document.createElement('table');
                 const headerRow = document.createElement('tr');
                 const headers = ['B', 'I', 'N', 'G', 'O'];
@@ -288,14 +308,14 @@
                 });
                 table.appendChild(headerRow);
 
-                patternData.forEach((row, rowIndex) => {
+                pattern.forEach((row, rowIndex) => {
                     const tr = document.createElement('tr');
                     row.forEach((cell, cellIndex) => {
                         const td = document.createElement('td');
                         const div = document.createElement('div');
                         if (cell || (rowIndex === 2 && cellIndex === 2)) {
-                            div.className = (rowIndex === 2 && cellIndex === 2) ?
-                                'free-spot' : 'circle';
+                            div.className = (rowIndex === 2 && cellIndex === 2) ? 'free-spot' :
+                                'circle';
                         }
                         td.appendChild(div);
                         tr.appendChild(td);
@@ -304,7 +324,7 @@
                 });
 
                 patternGrid.appendChild(table);
-            });
+            }
 
             resetButton.addEventListener('click', function() {
                 selectedNumbers = [];

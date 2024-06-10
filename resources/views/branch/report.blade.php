@@ -68,33 +68,33 @@
             </h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-gray-800 rounded-lg">
-                    <thead>
-                        <tr class="bg-gray-700">
-                            {{-- <th class="py-2 px-4">Game ID</th>
-                            <th class="py-2 px-4">Bet Amount</th>
-                            <th class="py-2 px-4">Total Players</th> --}}
+                    <thead class="bg-gray-700">
+                        <tr>
                             <th class="py-2 px-4">Date</th>
-                            <th class="py-2 px-4">Profit</th>
+                            <th class="py-2 px-4">Total Profit</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($games as $game)
                             <tr class="border-b border-gray-700">
-                                {{-- <td class="py-2 px-4">{{ $game->id }}</td>
-                                <td class="py-2 px-4">{{ $game->bet_amount }}</td>
-                                <td class="py-2 px-4">{{ $game->total_players }}</td> --}}
-                                <td class="py-2 px-4">{{ $game->created_at->format('l, F j, Y g:i A') }}</td>
-                                <td class="py-2 px-4">{{ $game->profit }}</td>
+                                <td class="py-2 px-4">{{ \Carbon\Carbon::parse($game->game_date)->setTimezone('Africa/Addis_Ababa')->format('l, F j, Y g:i A')
+                                }}
+                                </td>
+                                <td class="py-2 px-4">{{ number_format($game->total_profit, 2) }}</td>
                             </tr>
                         @endforeach
                     </tbody>
                     <tfoot>
                         <tr class="bg-gray-700">
-                            <td colspan="3" class="py-2 px-4 text-right font-bold">Total Profit</td>
-                            <td colspan="2" class="py-2 px-4 font-bold">{{ $totalProfit }}</td>
+                            <td class="py-2 px-4 text-right font-bold">Total Profit</td>
+                            <td class="py-2 px-4 font-bold">{{ number_format($totalProfit, 2) }}</td>
                         </tr>
                     </tfoot>
                 </table>
+
+            <div class="mt-4 flex justify-center">
+                {{ $games->links() }}
+            </div>
             </div>
         </div>
     </div>

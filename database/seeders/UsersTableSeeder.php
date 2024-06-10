@@ -20,15 +20,15 @@ class UsersTableSeeder extends Seeder
         // Create users
         $admin = User::create([
             'name' => 'Admin User',
-            'phone' => '1234567890',
+            'phone' => '0918810849',
             'role' => 'admin',
-            'address' => 'Admin Address',
+            'address' => 'Demoz-Admin',
             'password' => Hash::make('password'),
         ]);
 
         $agentUser = User::create([
             'name' => 'Agent User',
-            'phone' => '01111111111',
+            'phone' => '1111111111',
             'role' => 'agent',
             'address' => 'Agent Address',
             'password' => Hash::make('password'),
@@ -36,7 +36,7 @@ class UsersTableSeeder extends Seeder
 
         $branchUser = User::create([
             'name' => 'Branch User',
-            'phone' => '02222222222',
+            'phone' => '2222222222',
             'role' => 'branch',
             'address' => 'Branch Address',
             'password' => Hash::make('password'),
