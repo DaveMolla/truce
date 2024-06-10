@@ -152,7 +152,7 @@
                 <!-- Modal body -->
                 <form action="{{ route('admin.update-agent-password') }}" method="POST" class="p-4">
                     @csrf
-                    <input type="hidden" name="branch_id" id="branchIdPassword">
+                    <input type="hidden" name="agent_id" id="branchIdPassword">
                     <div>
                         <label for="newPassword" class="block text-sm font-medium text-white">New Password</label>
                         <input type="password" name="newPassword" id="newPassword"

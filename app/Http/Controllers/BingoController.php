@@ -187,9 +187,9 @@ class BingoController extends Controller
             foreach ($row as $colIndex => $isActive) {
                 if ($isActive) {
                     $number = $cardData[$rowIndex][$colIndex] ?? null;
-                    $isCenter = $rowIndex == 2 && $colIndex == 2; // Check if it's the center spot
+                    $isCenter = $rowIndex == 2 && $colIndex == 2;
                     if (($number !== "FREE" && !$isCenter) && !in_array($number, $calledNumbers)) {
-                        return false; // Exit if a number required by the pattern has not been called
+                        return false;
                     }
                 }
             }

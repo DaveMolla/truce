@@ -50,6 +50,7 @@ class BranchController extends Controller
             'address' => $validatedData['address'],
             'password' => bcrypt($validatedData['password']),
             'role' => $validatedData['role'] ?? 'branch',
+            'cut_off_percent' => '20',
         ]);
 
         $branch = Branch::create([
@@ -165,6 +166,7 @@ class BranchController extends Controller
             $recentGames = Game::where('branch_user_id', $branchUser->id)->latest()->paginate(10);
 
             $totalGames = Game::where('branch_user_id', $branchUser->id)->count();
+            // dd($branchUser->id);
 
             $branch = Branch::where('user_id', $branchUser->id)->first();
 
@@ -265,33 +267,40 @@ class BranchController extends Controller
     {
         $user = Auth::user();
         if ($user->role === 'branch') {
+
             $selectedNumbers = explode(',', $request->input('selected_numbers'));
 
-            $branch_user = User::where('role', 'branch', Auth::user()->id)->first();
+            // $branch_user = User::where('role', 'branch', Auth::user()->id)->first();
             $user = Auth::user();
             $cutOffPercent = $user->cut_off_percent ?? 0;
             $totalBetAmount = $request->bet_amount * count($selectedNumbers);
 
             $profit = ($cutOffPercent / 100) * $totalBetAmount;
-            $user_balance = Auth::user()->current_balance;
+            // dd($profit);
+            $user_balance = $user->current_balance;
 
-            if (Auth::user()->current_balance <= $profit) {
+            if ($user->current_balance <= $profit) {
                 return back()->withErrors([
                     'phone' => 'You do not have enough balance.',
                 ]);
             }
 
+
             // dd($request->all());
             $game = Game::create([
-                'branch_user_id' => $branch_user->id,
+                'branch_user_id' => $user->id,
                 'bet_amount' => $request->bet_amount,
+            // dd($user),
                 'total_players' => count($selectedNumbers),
                 'total_calls' => 0,
                 'status' => 'pending',
                 'total_bet_amount' => $totalBetAmount,
                 'profit' => $profit,
+            // dd($user)
+
             ]);
-            $branch_user->update([
+
+            $user->update([
                 'current_balance' => $user_balance - $profit,
             ]);
             $selectedNumbers = explode(',', $request->input('selected_numbers'));
@@ -325,20 +334,21 @@ class BranchController extends Controller
     }
 
 
-    public function gamePage($gameId)
-    {
-        $user = Auth::user();
-        if ($user->role === 'branch') {
-            $game = Game::with(['bingoCards', 'calledNumbers'])->findOrFail($gameId);
-            $previousCall = $game->calledNumbers->last();
+    // public function gamePage($gameId)
+    // {
+    //     $user = Auth::user();
+    //     if ($user->role === 'branch') {
 
-            return view('branch.game-page', [
-                'game' => $game,
-                'previousCall' => $previousCall
-            ]);
-        }
-        return redirect()->back();
-    }
+    //         $game = Game::with(['bingoCards', 'calledNumbers'])->findOrFail($gameId);
+    //         $previousCall = $game->calledNumbers->last();
+
+    //         return view('branch.game-page', [
+    //             'game' => $game,
+    //             'previousCall' => $previousCall
+    //         ]);
+    //     }
+    //     return redirect()->back();
+    // }
 
     // public function showGamePage()
     // {

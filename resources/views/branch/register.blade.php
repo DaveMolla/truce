@@ -14,6 +14,8 @@
             <h1 class="text-xl font-bold text-center text-white mb-6">Register New Branch</h1>
             <form action="{{ route('branch.store') }}" method="POST" class="space-y-4">
                 @csrf
+                <input type="hidden" id="cut_off_percent" name="cut_off_percent">
+
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-300">Name:</label>
                     <input type="text" id="name" name="name" required class="mt-1 block w-full px-3 py-2 border border-gray-600 bg-gray-800 text-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">

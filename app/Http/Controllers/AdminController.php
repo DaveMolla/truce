@@ -249,13 +249,14 @@ class AdminController extends Controller
     public function updateAgentPassword(Request $request)
     {
         $request->validate([
-            'branch_id' => 'required|exists:users,id',
+            'agent_id' => 'required|exists:users,id',
             'newPassword' => 'required|string',
         ]);
 
         $user = Auth::user();
+        // dd($request->agent_id);
         if ($user->role === 'admin') {
-            $user = User::findOrFail($request->branch_id);
+            $user = User::findOrFail($request->agent_id);
             $user->password = Hash::make($request->newPassword);
             $user->save();
 
@@ -272,10 +273,16 @@ class AdminController extends Controller
         ]);
 
         $user = Auth::user();
+        // dd($request->branch_id);
         if ($user->role === 'admin') {
-            $user = User::findOrFail($request->branch_id);
-            $user->password = Hash::make($request->newPassword);
-            $user->save();
+            $branch = Branch::find($request->branch_id);
+            $user = User::find($branch->user_id);
+            $user->update([
+                'password' => bcrypt('password'),
+            ]);
+            // dd($user->id);
+            // $user->password = Hash::make($request->newPassword);
+            // $user->save();
 
             return redirect()->back()->with('success', 'Password changed successfully!');
         }
