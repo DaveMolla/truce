@@ -7,10 +7,10 @@ namespace App\Http\Controllers;
 use App\Models\Agent;
 use App\Models\BingoCard;
 use App\Models\Branch;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 
 class AdminController extends Controller
 {
@@ -61,7 +61,6 @@ class AdminController extends Controller
     /**
      * Handle an admin login request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function login(Request $request)
@@ -76,6 +75,7 @@ class AdminController extends Controller
         if ($user && Hash::check($request->password, $user->password)) {
             if ($user->role === 'admin') {
                 Auth::login($user);
+
                 return redirect()->intended(route('admin.dashboard'));
             } else {
                 return back()->withErrors([
@@ -92,7 +92,6 @@ class AdminController extends Controller
     /**
      * Log the admin out of the application.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function logout(Request $request)
@@ -117,6 +116,7 @@ class AdminController extends Controller
         if ($user->role === 'admin') {
             return view('admin.dashboard');
         }
+
         return redirect()->back();
     }
 
@@ -127,6 +127,7 @@ class AdminController extends Controller
         if ($user->role === 'admin') {
             return view('admin.manage-agent-account', compact('agents'));
         }
+
         return redirect()->back();
     }
 
@@ -138,6 +139,7 @@ class AdminController extends Controller
         if ($user->role === 'admin') {
             return view('admin.manage-branch-account', compact('branches', 'agents'));
         }
+
         return redirect()->back();
     }
 
@@ -156,6 +158,7 @@ class AdminController extends Controller
 
             return redirect()->back()->with('success', 'Amount topped up successfully!');
         }
+
         return redirect()->back();
     }
 
@@ -174,6 +177,7 @@ class AdminController extends Controller
 
             return redirect()->back()->with('success', 'Amount withdrawn successfully!');
         }
+
         return redirect()->back();
     }
 
@@ -199,6 +203,7 @@ class AdminController extends Controller
 
             return redirect()->back()->with('success', 'Amount topped up successfully!');
         }
+
         return redirect()->back();
     }
 
@@ -221,6 +226,7 @@ class AdminController extends Controller
 
             return redirect()->back()->with('success', 'Amount withdrawn successfully!');
         }
+
         return redirect()->back();
     }
 
@@ -243,6 +249,7 @@ class AdminController extends Controller
 
             return redirect()->back()->with('success', 'Branch assigned to agent successfully!');
         }
+
         return redirect()->back();
     }
 
@@ -262,6 +269,7 @@ class AdminController extends Controller
 
             return redirect()->back()->with('success', 'Password changed successfully!');
         }
+
         return redirect()->back();
     }
 
@@ -274,18 +282,15 @@ class AdminController extends Controller
 
         $user = Auth::user();
         // dd($request->branch_id);
-        if ($user->role === 'admin') {
-            $branch = Branch::find($request->branch_id);
-            $user = User::find($branch->user_id);
-            $user->update([
-                'password' => bcrypt('password'),
+        if ($user->role == 'admin') {
+            $branch = Branch::with('user')->find($request->branch_id);
+            $branch->user->update([
+                'password' => bcrypt($request->newPassword),
             ]);
-            // dd($user->id);
-            // $user->password = Hash::make($request->newPassword);
-            // $user->save();
 
             return redirect()->back()->with('success', 'Password changed successfully!');
         }
+
         return redirect()->back();
     }
 
@@ -304,9 +309,11 @@ class AdminController extends Controller
             $branchUser->update([
                 'cut_off_percent' => $request->cutoffPercent,
             ]);
+
             // dd($request->cut_off_percent);
             return redirect()->back()->with('success', 'Cutoff percent set successfully!');
         }
+
         return redirect()->back();
     }
 
@@ -316,6 +323,4 @@ class AdminController extends Controller
 
         return view('admin.cards', compact('bingoCards'));
     }
-
-
 }
