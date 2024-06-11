@@ -8,15 +8,14 @@ use App\Http\Requests\CreateGameRequest;
 use App\Models\BingoCard;
 use App\Models\Branch;
 use App\Models\Game;
+use App\Models\User;
 use App\Models\WinningPattern;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use Session;
-
 
 class BranchController extends Controller
 {
@@ -63,7 +62,6 @@ class BranchController extends Controller
     /**
      * Handle a branch login request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     // public function login(Request $request)
@@ -104,15 +102,25 @@ class BranchController extends Controller
             Auth::login($user);
             switch ($user->role) {
                 case 'admin':
-                    return redirect()->route('admin.dashboard');
+                    $route = 'admin.dashboard';
+                    break;
                 case 'agent':
-                    return redirect()->route('agent.dashboard');
+                    $route = 'agent.dashboard';
+                    break;
                 case 'branch':
-                    return redirect()->route('branch.dashboard');
+                    $route = 'branch.dashboard';
+                    break;
                 default:
                     Auth::logout();
-                    return back()->withErrors(['phone' => 'Invalid role.']);
+                    $route = 'default';
+                    break;
             }
+
+            if ($route == 'default') {
+                return redirect()->back()->withErrors(['phone' => 'The provided credentials do not match our records.']);
+            }
+
+            return redirect()->route($route);
         }
 
         return back()->withErrors(['phone' => 'The provided credentials do not match our records.']);
@@ -121,7 +129,6 @@ class BranchController extends Controller
     /**
      * Log the branch out of the application.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function logout(Request $request)
@@ -150,8 +157,10 @@ class BranchController extends Controller
 
             return view('branch.dashboard', compact('bingoCards', 'winningPatterns', 'selectedCardIds'));
         }
+
         return redirect()->back();
     }
+
     public function history(Request $request)
     {
         $user = Auth::user();
@@ -174,6 +183,7 @@ class BranchController extends Controller
 
             return view('branch.history', compact('totalGames', 'walletBalance', 'branchUser', 'recentGames'));
         }
+
         return redirect()->back();
 
     }
@@ -236,7 +246,6 @@ class BranchController extends Controller
 
     //     $selectedNumbers = explode(',', $request->input('selected_numbers'
 
-
     //     $branch_user = User::where('role', 'branch', Auth::user()->id)->first();
     //     // dd($branch_user);
     //     // $branch_user = Branch::
@@ -259,7 +268,6 @@ class BranchController extends Controller
 
     //     // Associate selected cards with the game
     //     // $game->bingoCards()->attach($request->input('selected_numbers'
-
 
     //     return view('branch.game-page', ['game' => $game->id]);
     // }
@@ -285,18 +293,17 @@ class BranchController extends Controller
                 ]);
             }
 
-
             // dd($request->all());
             $game = Game::create([
                 'branch_user_id' => $user->id,
                 'bet_amount' => $request->bet_amount,
-            // dd($user),
+                // dd($user),
                 'total_players' => count($selectedNumbers),
                 'total_calls' => 0,
                 'status' => 'pending',
                 'total_bet_amount' => $totalBetAmount,
                 'profit' => $profit,
-            // dd($user)
+                // dd($user)
 
             ]);
 
@@ -312,27 +319,27 @@ class BranchController extends Controller
                     'winning_pattern' => $request->winning_pattern,
                     'call_speed' => $request->call_speed,
                     'caller_language' => $request->caller_language,
-                ]
+                ],
             ]);
-            Session::forget('callHistory');
+            session()->forget('callHistory');
             // dd($selectedNumbers);
 
             // Store game data in session
-            Session::put('gameId', $game->id);
-            Session::put('winning_pattern', $request->input('winning_pattern') ?? []);
-            Session::put('selected_numbers', $request->input('selected_numbers') ?? []);
+            session()->put('gameId', $game->id);
+            session()->put('winning_pattern', $request->input('winning_pattern') ?? []);
+            session()->put('selected_numbers', $request->input('selected_numbers') ?? []);
             $callSpeedMapping = [
                 'very_fast' => 3000,
                 'fast' => 5000,
             ];
             $callSpeed = $callSpeedMapping[$request->input('call_speed')] ?? 5000;
-            Session::put('caller_speed', $callSpeed);
+            session()->put('caller_speed', $callSpeed);
 
             return redirect()->route('bingo.index');
         }
+
         return redirect()->back();
     }
-
 
     // public function gamePage($gameId)
     // {
@@ -392,6 +399,7 @@ class BranchController extends Controller
 
             return view('branch.report', compact('games', 'totalProfit', 'startDate', 'endDate', 'branchUser'));
         }
+
         return redirect()->back();
     }
 }

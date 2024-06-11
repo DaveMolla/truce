@@ -42,7 +42,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::get('admin/boards', [AdminController::class, 'cards'])->name('admin.cards');
 
+});
 
+Route::group(['prefix' => 'agent'], function () {
 
 });
 
@@ -68,17 +70,14 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('branch/game-page', [BranchController::class, 'createGame'])->name('branch.game-page');
     Route::get('branch/game/{game}', [BranchController::class, 'gamePage']);
 
-
     Route::get('branch/report', [BranchController::class, 'showReport'])->name('branch.report');
     Route::post('/bingo/check', [BingoController::class, 'checkCard'])->name('bingo.check');
 
-
-    Route::get('bingo', [BingoController::class,'index'])->name('bingo.index');
-    Route::post('bingo/call', [BingoController::class,'callNextNumber'])->name('bingo.call');
-    Route::post('bingo/reset', [BingoController::class,'resetBoard'])->name('bingo.reset');
-    Route::post('bingo/end', [BingoController::class,'endGame'])->name('bingo.end');
+    Route::get('bingo', [BingoController::class, 'index'])->name('bingo.index');
+    Route::post('bingo/call', [BingoController::class, 'callNextNumber'])->name('bingo.call');
+    Route::post('bingo/reset', [BingoController::class, 'resetBoard'])->name('bingo.reset');
+    Route::post('bingo/end', [BingoController::class, 'endGame'])->name('bingo.end');
 
     // Route::post('fetch-card', [BingoController::class,'fetchCard'])->name('fetch.card');
-
 
 });
