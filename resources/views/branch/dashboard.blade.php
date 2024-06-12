@@ -241,11 +241,20 @@
                                 language</label>
                             <select id="caller_language" name="caller_language"
                                 class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5">
-                                <option value="amharic_female">Amharic Female</option>
-                                <option value="amharic_male">Amharic Male</option>
-                                <option value="english_male">English Male</option>
-                                <option value="english_female">English Female</option>
+                                <option value="amharic_female"
+                                    {{ session('game_setup.caller_language') == 'amharic_female' ? 'selected' : '' }}>
+                                    Amharic Female</option>
+                                <option value="english_female"
+                                    {{ session('game_setup.caller_language') == 'english_female' ? 'selected' : '' }}>
+                                    English Female</option>
+                                <option value="amharic_male"
+                                    {{ session('game_setup.caller_language') == 'amharic_male' ? 'selected' : '' }}>
+                                    Amharic Male</option>
+                                <option value="english_male"
+                                    {{ session('game_setup.caller_language') == 'english_male' ? 'selected' : '' }}>
+                                    English Male</option>
                             </select>
+
                         </div>
                     </div>
 

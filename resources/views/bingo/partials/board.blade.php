@@ -690,11 +690,24 @@
                     updateCallDisplay(data.callHistory);
 
                     if (data.number !== null) {
-                        const callerLanguage = gameSetup.caller_language || 'default_language';
-                        const audioPath = `/audios/${callerLanguage}/${data.number}.mp3`;
-                        const audio = new Audio(audioPath);
-                        audio.play().catch(e => console.error('Error playing audio:', e));
+                        let callerLanguage = gameSetup.caller_language || 'amharic_female';
+                        let audioPath = `/audios/${callerLanguage}/${data.number}.mp3`;
+                        let audio = new Audio(audioPath);
+
+                        audio.play().catch(e => {
+                            console.error('Error playing audio:', e);
+                            callerLanguage = 'amharic_female';
+                            audioPath =
+                                `/audios/${callerLanguage}/${data.number}.mp3`;
+                            audio = new Audio(
+                                audioPath);
+                            audio.play().catch(error => {
+                                console.error('Error playing fallback audio:',
+                                    error);
+                            });
+                        });
                     }
+
                     resetCountdown(); // Reset the countdown after fetching the number
                     isFetching = false; // Reset flag after fetch completes
                 }
