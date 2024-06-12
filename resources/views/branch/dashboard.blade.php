@@ -155,13 +155,14 @@
             <nav id="dropdownMenu" class="absolute right-0 mt-2 bg-gray-500 w-64 hidden">
                 <ul>
                     <li class="mb-4">
-                        <a href="{{ route('branch.history') }}"
-                            class="text-lg hover:text-gray-400" style="align-items: center">Transaction History</a>
+                        <a href="{{ route('branch.history') }}" class="text-lg hover:text-gray-400"
+                            style="align-items: center">Transaction History</a>
                     </li>
                     <li class="mb-4">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="text-lg hover:text-gray-400" style="align-items: center">Logout</button>
+                            <button type="submit" class="text-lg hover:text-gray-400"
+                                style="align-items: center">Logout</button>
                         </form>
                     </li>
                 </ul>
@@ -240,9 +241,10 @@
                                 language</label>
                             <select id="caller_language" name="caller_language"
                                 class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5">
-                                <option value="english_female_very_fast">Amharic Female Very Fast</option>
-                                {{-- <option value="english_female_fast">English Female Fast</option> --}}
-                                <!-- Add more options as needed -->
+                                <option value="amharic_female">Amharic Female</option>
+                                <option value="amharic_male">Amharic Male</option>
+                                <option value="english_male">English Male</option>
+                                <option value="english_female">English Female</option>
                             </select>
                         </div>
                     </div>
@@ -259,6 +261,8 @@
 
                 <button id="reset-button" class="w-full text-gray-100 font-bold py-2 px-4 rounded mt-4"
                     style="background-color: red;">Reset Board</button>
+                <button id="announcementButton" class="w-full text-gray-100 font-bold py-2 px-4 rounded mt-4"
+                    style="background-color: red;">Announcement</button>
             </div>
             <div class="pattern-display mt-6" style="text-align: center;">
                 <div class="pattern-grid" id="pattern_grid">
@@ -286,6 +290,15 @@
             const totalAmountInput = document.getElementById('total_amount');
             const patternGrid = document.getElementById('pattern_grid');
             const resetButton = document.getElementById('reset-button');
+            const announcementButton = document.getElementById('announcementButton');
+            const announcementSound = new Audio('/audios/announcement.mp3');
+
+            announcementButton.addEventListener('click', function() {
+                announcementSound.play().catch(e => {
+                    console.error("Error playing sound:", e);
+                    alert('Error playing sound. Please check console for details.');
+                });
+            });
 
             let selectedNumbers = [];
 
@@ -334,7 +347,7 @@
             });
 
             var toggleBtn = document.querySelector(
-            '.dropdown-toggle');
+                '.dropdown-toggle');
             toggleBtn.addEventListener('click', toggleDropdown);
 
             function toggleDropdown() {

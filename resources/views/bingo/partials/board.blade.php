@@ -506,6 +506,8 @@
             const numberButtons = document.querySelectorAll('.bingo-table td button');
             const pauseAudio = document.getElementById('pauseAudio');
             const startAudio = document.getElementById('startAudio');
+            const gameSetup = @json(session('game_setup', []));
+            // console.log(gameSetup); 
             let activeInterval;
 
             let numberActivationCounts = new Map(); // To track activations for each number
@@ -611,36 +613,6 @@
                 }
             }
 
-            // function shuffleActiveNumbers() {
-            //     numberButtons.forEach(button => {
-            //         button.classList.remove('active'); // Remove active class from all buttons
-            //     });
-
-            //     const activeCount = 40 + Math.floor(Math.random() * 1); // Randomly choose between 5 to 10 numbers
-            //     const shuffledNumbers = Array.from(numberButtons);
-            //     shuffleArray(shuffledNumbers); // Shuffle array of buttons
-
-            //     shuffledNumbers.slice(0, activeCount).forEach(button => {
-            //         button.classList.add('active'); // Add active class to a random subset of buttons
-            //     });
-            // }
-
-            // shuffleButton.addEventListener('click', function() {
-            //     shuffleSound.play();
-            //     clearInterval(activeInterval); // Clear any existing interval
-            //     shuffleActiveNumbers(); // Initial shuffle when button is clicked
-            //     activeInterval = setInterval(shuffleActiveNumbers,
-            //     50); // Shuffle active numbers every 2 seconds
-            // });
-
-            // function shuffleArray(array) {
-            //     for (let i = array.length - 1; i > 0; i--) {
-            //         const j = Math.floor(Math.random() * (i + 1));
-            //         [array[i], array[j]] = [array[j], array[i]]; // Swap elements
-            //     }
-            // }
-
-
             function startCalling() {
                 if (!intervalId) { // Ensure that no interval is running before starting a new one
                     startAudio.play(); // Play start sound
@@ -718,9 +690,11 @@
                     updateBoard(data.callHistory);
                     updateCallDisplay(data.callHistory);
 
-                    if (newNumber !== null) {
-                        const audio = new Audio(`/audios/${newNumber}.mp3`);
-                        audio.play();
+                    if (data.number !== null) {
+                        const callerLanguage = gameSetup.caller_language || 'default_language';
+                        const audioPath = `/audios/${callerLanguage}/${data.number}.mp3`;
+                        const audio = new Audio(audioPath);
+                        audio.play().catch(e => console.error('Error playing audio:', e));
                     }
                     resetCountdown(); // Reset the countdown after fetching the number
                     isFetching = false; // Reset flag after fetch completes
