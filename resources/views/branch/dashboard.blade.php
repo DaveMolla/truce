@@ -125,7 +125,7 @@
     </style>
 </head>
 
-<body class="bg-gray-800" style="margin-right: 500px">
+<body class="bg-gray-800">
     <div class="min-h-screen flex items-center justify-center">
         {{-- <div class="bg-gray-500 w-64 p-4">
             <h1 class="text-3xl font-bold mb-6">Nexus Bingo</h1>
