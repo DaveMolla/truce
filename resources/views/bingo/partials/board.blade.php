@@ -332,7 +332,7 @@
             <span class="bottom-right">
                 <div class="control-panel">
                     <div class="display-panel">
-                        <div class="previous-call">
+                        <div class="countdown">
                             <span>Next call</span>
                             <div id="countdown-display" class="display"></div>
                         </div>
@@ -459,6 +459,9 @@
                         });
                     </script>
                 @endif --}}
+                <audio id="pauseAudio" src="audios/Bingo.mp3" preload="auto"></audio>
+                <audio id="startAudio" src="audios/Start.mp3" preload="auto"></audio>
+
 
                 <form action="{{ route('bingo.call') }}" method="POST" id="call-form">
                     @csrf
@@ -494,6 +497,15 @@
             const shuffleButton = document.getElementById('shuffleButton');
             const shuffleSound = new Audio('audios/Shuffle.mp3');
             const slides = document.querySelectorAll('#slideshow-container .slide');
+            const numberButtons = document.querySelectorAll('.bingo-table td button');
+            const pauseAudio = document.getElementById('pauseAudio');
+            const startAudio = document.getElementById('startAudio');
+            let activeInterval;
+
+            let numberActivationCounts = new Map(); // To track activations for each number
+            let totalActivationsNeeded = 10; // Each number needs to be active twice
+
+
             let currentSlide = 0;
 
             function showSlide(index) {
@@ -538,35 +550,109 @@
                 }
             }
 
+
+            function shuffleActiveNumbers() {
+                // Reset the active class for all buttons at the start of each shuffle
+                numberButtons.forEach(button => {
+                    button.classList.remove('active');
+                });
+
+                const activeCount = 25 + Math.floor(Math.random() * 6); // Randomly choose between 5 to 10 numbers
+                const shuffledNumbers = Array.from(numberButtons);
+                shuffleArray(shuffledNumbers);
+
+                shuffledNumbers.slice(0, activeCount).forEach(button => {
+                    button.classList.add('active');
+                    let activations = numberActivationCounts.get(button.textContent) || 0;
+                    numberActivationCounts.set(button.textContent, ++
+                        activations); // Increment the activation count
+                });
+
+                // Check if all numbers have been activated at least twice
+                if (Array.from(numberActivationCounts.values()).every(count => count >= totalActivationsNeeded)) {
+                    clearInterval(activeInterval); // Stop the interval when all numbers have been activated twice
+                    console.log('All numbers have been activated twice.');
+                    numberButtons.forEach(button => {
+                        button.classList.remove('active');
+                    });
+                }
+            }
+
             shuffleButton.addEventListener('click', function() {
                 shuffleSound.play();
+                clearInterval(activeInterval); // Clear any existing interval
+                numberActivationCounts.clear(); // Reset activation counts
+                shuffleActiveNumbers(); // Initial shuffle when button is clicked
+                activeInterval = setInterval(shuffleActiveNumbers,
+                    50); // Shuffle active numbers every 2 seconds
             });
+
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+                }
+            }
+
+            // function shuffleActiveNumbers() {
+            //     numberButtons.forEach(button => {
+            //         button.classList.remove('active'); // Remove active class from all buttons
+            //     });
+
+            //     const activeCount = 40 + Math.floor(Math.random() * 1); // Randomly choose between 5 to 10 numbers
+            //     const shuffledNumbers = Array.from(numberButtons);
+            //     shuffleArray(shuffledNumbers); // Shuffle array of buttons
+
+            //     shuffledNumbers.slice(0, activeCount).forEach(button => {
+            //         button.classList.add('active'); // Add active class to a random subset of buttons
+            //     });
+            // }
+
+            // shuffleButton.addEventListener('click', function() {
+            //     shuffleSound.play();
+            //     clearInterval(activeInterval); // Clear any existing interval
+            //     shuffleActiveNumbers(); // Initial shuffle when button is clicked
+            //     activeInterval = setInterval(shuffleActiveNumbers,
+            //     50); // Shuffle active numbers every 2 seconds
+            // });
+
+            // function shuffleArray(array) {
+            //     for (let i = array.length - 1; i > 0; i--) {
+            //         const j = Math.floor(Math.random() * (i + 1));
+            //         [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            //     }
+            // }
 
 
             function startCalling() {
                 if (!intervalId) { // Ensure that no interval is running before starting a new one
-                    intervalId = setInterval(() => {
-                        if (totalCalls >= 75) {
-                            pauseCalling();
-                            alert('Maximum number of calls reached.');
-                            return;
-                        }
-                        if (countdown > 0) {
-                            countdown -= 1;
-                            countdownDisplay.textContent = `${countdown}s`;
-                        }
-                        if (countdown <= 0 && !
-                            isFetching) { // Only fetch next number if not already fetching
-                            fetchNextNumber();
-                        }
-                    }, 1000);
-                    isRunning = true;
-                    nextNumberBtn.textContent = 'Pause';
+                    startAudio.play(); // Play start sound
+
+                    startAudio.onended = function() { // When the start sound ends, start the countdown
+                        intervalId = setInterval(() => {
+                            if (totalCalls >= 75) {
+                                pauseCalling();
+                                alert('Maximum number of calls reached.');
+                                return;
+                            }
+                            if (countdown > 0) {
+                                countdown -= 1;
+                                countdownDisplay.textContent = `${countdown}s`;
+                            }
+                            if (countdown <= 0 && !
+                                isFetching) { // Only fetch next number if not already fetching
+                                fetchNextNumber();
+                            }
+                        }, 1000);
+                        isRunning = true;
+                        nextNumberBtn.textContent = 'Pause';
+                    };
                 }
             }
 
             function pauseCalling() {
                 if (intervalId) {
+                    pauseAudio.play(); // Play pause sound
                     clearInterval(intervalId);
                     intervalId = null; // Clear the interval ID
                 }
@@ -632,10 +718,10 @@
                 }
 
                 // Update previous calls display
-                const previousCallsDisplay = document.querySelector('.previous-call .display');
-                if (previousCallsDisplay && callHistory.length) {
-                    previousCallsDisplay.textContent = callHistory[callHistory.length - 1];
-                }
+                const countdownDisplay = document.querySelector('.countdown .display');
+                // if (countdownDisplay && callHistory.length) {
+                //     countdownDisplay.textContent = callHistory[callHistory.length - 1];
+                // }
                 bingoButtons.forEach(button => {
                     const number = parseInt(button.textContent, 10);
                     if (callHistory.includes(number)) {

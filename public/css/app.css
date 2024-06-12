@@ -18,6 +18,12 @@ header h1 {
     align-items: flex-start;
 }
 
+.bingo-table td button.active {
+    /* background-color: #019DD6; Light blue background for active state */
+    color: white; /* White text color for active state */
+}
+
+
 .bingo-table {
     margin: 20px auto;
     border-collapse: collapse;
@@ -79,7 +85,7 @@ header h1 {
 }
 
 .control-panel .total-calls,
-.control-panel .previous-call {
+.control-panel .countdown {
     display: flex;
     flex-direction: column;
     align-items: center;
