@@ -310,7 +310,7 @@ class BranchController extends Controller
             $user->update([
                 'current_balance' => $user_balance - $profit,
             ]);
-            $selectedNumbers = explode(',', $request->input('selected_numbers'));
+            $selectedNumbers = explode(',', $request->input('selected_numbers', ''));
             session(['selected_numbers' => $selectedNumbers]);
             session([
                 'gameId' => $game->id,

@@ -362,7 +362,6 @@
 
 
                 <!-- Modal Structure -->
-                <!-- Modal Structure -->
                 @if (session('show_modal'))
                     <div id="check-number" tabindex="-1" aria-hidden="true"
                         class="fixed inset-0 z-50 flex items-center justify-center w-full h-full">
@@ -507,7 +506,7 @@
             const pauseAudio = document.getElementById('pauseAudio');
             const startAudio = document.getElementById('startAudio');
             const gameSetup = @json(session('game_setup', []));
-            // console.log(gameSetup); 
+            // console.log(gameSetup);
             let activeInterval;
 
             let numberActivationCounts = new Map(); // To track activations for each number
