@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Branch Dashboard | TruceBingo</title>
+    <title>Branch Dashboard | NexusBingo</title>
     @vite('resources/css/app.css')
     <style>
         .dropdown-toggle {
@@ -127,7 +127,7 @@
 <body class="bg-gray-800" style="margin-right: 500px">
     <div class="min-h-screen flex items-center justify-center">
         {{-- <div class="bg-gray-500 w-64 p-4">
-            <h1 class="text-3xl font-bold mb-6">Truce Bingo</h1>
+            <h1 class="text-3xl font-bold mb-6">Nexus Bingo</h1>
             <nav>
                 <ul>
                     <li class="mb-4">

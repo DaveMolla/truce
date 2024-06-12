@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Branch Cards | TruceBingo</title>
+    <title>Branch Cards | NexusBingo</title>
     @vite('resources/css/app.css')
 </head>
 
@@ -14,7 +14,7 @@
     <div class="flex min-h-screen">
         <!-- Sidebar -->
         <div class="bg-gray-800 w-64 p-4">
-            <h1 class="text-3xl font-bold mb-6">Truce Bingo</h1>
+            <h1 class="text-3xl font-bold mb-6">Nexus Bingo</h1>
             <nav>
                 <ul>
                     <li class="mb-4">

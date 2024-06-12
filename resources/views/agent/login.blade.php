@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Truce Bingo Agent Login</title>
+    <title>Nexus Bingo Agent Login</title>
     @vite('resources/css/app.css')
 </head>
 
@@ -13,7 +13,7 @@
 
     <div class="bg-gray-800 p-8 rounded-lg shadow-md w-full max-w-md">
         {{-- <div class="flex justify-center mb-6">
-            <img src="/path/to/your/logo.png" alt="Truce Bingo" class="h-12">
+            <img src="/path/to/your/logo.png" alt="Nexus Bingo" class="h-12">
         </div> --}}
         <h2 class="text-2xl font-bold text-white mb-6 text-center">Sign in to your account</h2>
 
