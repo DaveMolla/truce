@@ -82,6 +82,7 @@
                 <thead>
                     <tr>
                         <th>No.</th>
+                        <th>Agent Name</th>
                         <th>Owner Name</th>
                         <th>Address</th>
                         <th>Phone No</th>
@@ -98,6 +99,7 @@
                     @foreach ($branches as $branch)
                         <tr>
                             <td>{{ $rowNumber++ }}</td>
+                            <td>{{ $branch->agent->user->name ?? 'No Agent' }}</td>
                             <td>{{ $branch->user->name }}</td>
                             <td>{{ $branch->user->address }}</td>
                             <td>{{ $branch->user->phone }}</td>

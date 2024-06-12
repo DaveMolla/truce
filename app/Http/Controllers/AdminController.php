@@ -134,7 +134,7 @@ class AdminController extends Controller
     public function manageBranchAccount()
     {
         $agents = Agent::all();
-        $branches = Branch::paginate(10);
+        $branches = Branch::with('agent')->paginate(10);
         $user = Auth::user();
         if ($user->role === 'admin') {
             return view('admin.manage-branch-account', compact('branches', 'agents'));
