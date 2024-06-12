@@ -55,7 +55,8 @@
 
         .pattern-grid table {
             border-collapse: collapse;
-            width: 100%;
+            width: 350px;
+            height: 350px;
         }
 
         .pattern-grid th,
@@ -74,8 +75,8 @@
         }
 
         .pattern-grid .circle {
-            width: 1.7rem;
-            height: 1.7rem;
+            width: 2rem;
+            height: 2rem;
             background-color: #019DD6;
             border-radius: 50%;
             margin: auto;
@@ -83,8 +84,8 @@
 
         .pattern-grid .free-spot {
             background-color: #ffd700;
-            width: 1.7rem;
-            height: 1.7rem;
+            width: 2rem;
+            height: 2rem;
             border-radius: 50%;
             margin: auto;
         }
@@ -200,13 +201,13 @@
                             <label class="block mb-2 text-sm font-medium text-white">Bingo Type</label>
                             <input type="text"
                                 class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5 placeholder-gray-400"
-                                placeholder="75 Bingo" style="width: 480px" disabled>
+                                placeholder="75 Bingo" style="width: 250px" disabled>
                         </div>
                         <div>
                             <label for="bet_amount" class="block mb-2 text-sm font-medium text-white">Bet amount</label>
                             <input type="text" id="bet_amount" name="bet_amount"
                                 class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5 placeholder-gray-400"
-                                placeholder="Enter bet amount" style="width: 480px"
+                                placeholder="Enter bet amount" style="width: 250px"
                                 value="{{ session('game_setup.bet_amount', '') }}" required>
                         </div>
 
@@ -239,8 +240,8 @@
                                 language</label>
                             <select id="caller_language" name="caller_language"
                                 class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5">
-                                <option value="english_female_very_fast">English Female Very Fast</option>
-                                <option value="english_female_fast">English Female Fast</option>
+                                <option value="english_female_very_fast">Amharic Female Very Fast</option>
+                                {{-- <option value="english_female_fast">English Female Fast</option> --}}
                                 <!-- Add more options as needed -->
                             </select>
                         </div>
