@@ -44,9 +44,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
 });
 
-Route::group(['prefix' => 'agent'], function () {
+// Route::group(['prefix' => 'agent'], function () {
 
-});
+// });
 
 // Agent routes
 Route::get('agent/login', [AgentController::class, 'index'])->name('agent.login');
