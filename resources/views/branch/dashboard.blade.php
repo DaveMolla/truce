@@ -7,6 +7,20 @@
     <title>Branch Dashboard | TruceBingo</title>
     @vite('resources/css/app.css')
     <style>
+        .dropdown-toggle {
+            cursor: pointer;
+            margin-top: 25px;
+            border-radius: 10%;
+
+        }
+
+        .relative {
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
         .number-grid {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
@@ -112,7 +126,7 @@
 
 <body class="bg-gray-800" style="margin-right: 500px">
     <div class="min-h-screen flex items-center justify-center">
-        <div class="bg-gray-500 w-64 p-4">
+        {{-- <div class="bg-gray-500 w-64 p-4">
             <h1 class="text-3xl font-bold mb-6">Truce Bingo</h1>
             <nav>
                 <ul>
@@ -124,6 +138,29 @@
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="text-lg hover:text-gray-400">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+        </div> --}}
+        <div class="relative">
+            <!-- Dropdown Button -->
+            <button class="dropdown-toggle bg-gray-500 w-64 p-4 text-3xl font-bold mb-6">
+                History <!-- You can change the button text or add an icon -->
+            </button>
+
+
+            <!-- Dropdown Menu -->
+            <nav id="dropdownMenu" class="absolute right-0 mt-2 bg-gray-500 w-64 hidden">
+                <ul>
+                    <li class="mb-4">
+                        <a href="{{ route('branch.history') }}"
+                            class="text-lg hover:text-gray-400" style="align-items: center">Transaction History</a>
+                    </li>
+                    <li class="mb-4">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="text-lg hover:text-gray-400" style="align-items: center">Logout</button>
                         </form>
                     </li>
                 </ul>
@@ -292,6 +329,29 @@
                     }, 3000);
                 } else {
                     displayPattern(patternData);
+                }
+            });
+
+            var toggleBtn = document.querySelector(
+            '.dropdown-toggle');
+            toggleBtn.addEventListener('click', toggleDropdown);
+
+            function toggleDropdown() {
+                var dropdownMenu = document.getElementById('dropdownMenu');
+                if (dropdownMenu.classList.contains('hidden')) {
+                    dropdownMenu.classList.remove('hidden');
+                } else {
+                    dropdownMenu.classList.add('hidden');
+                }
+            }
+
+            // Close dropdown when clicking outside
+            window.addEventListener('click', function(event) {
+                if (!event.target.matches('.bg-gray-500') && !event.target.matches('.dropdown-toggle')) {
+                    var dropdownMenu = document.getElementById('dropdownMenu');
+                    if (dropdownMenu && !dropdownMenu.classList.contains('hidden')) {
+                        dropdownMenu.classList.add('hidden');
+                    }
                 }
             });
 

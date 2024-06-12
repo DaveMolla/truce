@@ -257,6 +257,7 @@ header h1 {
     margin-top: 20px;
 }
 
+
 .previous-number {
     width: 200px;
     height: 200px;
@@ -271,15 +272,13 @@ header h1 {
     transition: all 0.3s ease;
     border: 10px solid;
     position: relative;
-    margin-bottom: 42px;
 }
 
 .previous-number.current-call {
-    width: 270px;
-    height: 270px;
+    width: 250px;
+    height: 250px;
     font-size: 80px;
     border-width: 20px;
-    margin-bottom: 42px;
 }
 
 .previous-number::after {
@@ -295,9 +294,11 @@ header h1 {
 }
 
 .previous-number span {
-    /* display: block; */
+    display: block;
     text-align: center;
     font-weight: bold;
+    line-height: 1; /* Reduces the space between lines */
+    margin-bottom: 5px; /* Removes extra space below the span if needed */
 }
 
 

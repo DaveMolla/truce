@@ -344,6 +344,12 @@
                 </div>
             </span>
             <div class="buttons">
+                @if (session('error'))
+                    <div class="text-red-500">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
                 <form action="{{ route('bingo.check') }}" method="POST">
                     @csrf
                     <div class="input-group">
@@ -536,9 +542,20 @@
             // Close modal on clicking outside of the modal content
             window.onclick = function(event) {
                 if (event.target == document.getElementById('check-number')) {
-                    document.getElementById('check-number').style.display = "none";
+                    closeModal();
                 }
             };
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === "Escape") { // Check if the key pressed is 'Escape'
+                    closeModal();
+                }
+            });
+
+            function closeModal() {
+                document.getElementById('check-number').style.display = "none";
+            }
+
 
 
             window.confirmEndGame = function() {
@@ -584,7 +601,7 @@
                 numberActivationCounts.clear(); // Reset activation counts
                 shuffleActiveNumbers(); // Initial shuffle when button is clicked
                 activeInterval = setInterval(shuffleActiveNumbers,
-                    50); // Shuffle active numbers every 2 seconds
+                    75); // Shuffle active numbers every 2 seconds
             });
 
             function shuffleArray(array) {

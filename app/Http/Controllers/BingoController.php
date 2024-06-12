@@ -146,6 +146,10 @@ class BingoController extends Controller
     {
         $cardId = $request->input('card_id');
         $card = BingoCard::find($cardId);
+
+        if (!$card) {
+            return back()->with('error', 'Card number does not exist.');
+        }
         $calledNumbers = session('callHistory', []);
         $winningPattern = json_decode(Session::get('winning_pattern', '[]'), true);
         $winningP = WinningPattern::find($winningPattern);
