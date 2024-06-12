@@ -7,7 +7,9 @@ namespace App\Http\Controllers;
 use App\Models\Agent;
 use App\Models\BingoCard;
 use App\Models\Branch;
+use App\Models\Game;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -110,15 +112,37 @@ class AdminController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function dashboard()
-    {
-        $user = Auth::user();
-        if ($user->role === 'admin') {
-            return view('admin.dashboard');
-        }
-
+    public function dashboard(Request $request)
+{
+    $user = Auth::user();
+    if ($user->role !== 'admin') {
         return redirect()->back();
     }
+
+    $date = $request->input('selected_date');
+    $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
+    $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
+
+    $branches = User::where('role', 'branch')->paginate(10);
+    $totalProfitSum = 0;
+
+    foreach ($branches as $branch) {
+        $query = Game::where('branch_user_id', $branch->id);
+
+        if ($date) {
+            $query->whereDate('created_at', $date);
+        } else {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        $branch->totalGames = $query->count();
+        $branch->totalProfit = $query->sum('profit');  // Assuming 'profit' is a column
+        $totalProfitSum += $branch->totalProfit;
+    }
+
+    return view('admin.dashboard', compact('branches', 'date', 'totalProfitSum', 'startDate', 'endDate'));
+}
+
 
     public function manageAgentAccount()
     {

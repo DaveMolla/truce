@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 
 class Game extends Model
 {
@@ -27,5 +29,9 @@ class Game extends Model
     public function bingoCards()
     {
         return $this->belongsToMany(BingoCard::class, 'game_bingo_card', 'game_id', 'bingo_card_id');
+    }
+    public function Branch():HasOneOrMany
+    {
+        return HasOneOrMany(Branch::class);
     }
 }

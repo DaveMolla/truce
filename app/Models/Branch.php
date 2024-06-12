@@ -20,4 +20,8 @@ class Branch extends Model
     {
         return $this->belongsTo(Agent::class);
     }
+    public function game()
+    {
+        return $this->belongsTo(Game::class);
+    }
 }
