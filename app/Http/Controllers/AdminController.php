@@ -124,11 +124,9 @@ class AdminController extends Controller
         $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
 
         $branches = Branch::with('agent')->paginate(10);
-        // dd($branches);
         $totalProfitSum = 0;
-
         foreach ($branches as $branch) {
-            $query = Game::where('branch_user_id', $branch->id);
+            $query = Game::where('branch_user_id', $branch->user->id);
 
             if ($date) {
                 $query->whereDate('created_at', $date);
