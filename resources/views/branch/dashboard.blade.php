@@ -241,18 +241,24 @@
                                 language</label>
                             <select id="caller_language" name="caller_language"
                                 class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5">
-                                <option value="amharic_female"
-                                    {{ session('game_setup.caller_language') == 'amharic_female' ? 'selected' : '' }}>
-                                    Amharic Female</option>
-                                <option value="english_female"
-                                    {{ session('game_setup.caller_language') == 'english_female' ? 'selected' : '' }}>
-                                    English Female</option>
-                                <option value="amharic_male"
+                                <option value="amharic_female_3sec"
+                                    {{ session('game_setup.caller_language') == 'amharic_female_3sec' ? 'selected' : '' }}>
+                                    Amharic Female 3sec</option>
+                                <option value="english_female_3sec"
+                                    {{ session('game_setup.caller_language') == 'english_female_3sec' ? 'selected' : '' }}>
+                                    English Female 3sec</option>
+                                {{-- <option value="amharic_male"
                                     {{ session('game_setup.caller_language') == 'amharic_male' ? 'selected' : '' }}>
-                                    Amharic Male</option>
-                                <option value="english_male"
-                                    {{ session('game_setup.caller_language') == 'english_male' ? 'selected' : '' }}>
-                                    English Male</option>
+                                    Amharic Male 3sec</option> --}}
+                                <option value="english_male_3sec"
+                                    {{ session('game_setup.caller_language') == 'english_male_3sec' ? 'selected' : '' }}>
+                                    English Male 3sec</option>
+                                <option value="english_male_5sec"
+                                    {{ session('game_setup.caller_language') == 'english_male_5sec' ? 'selected' : '' }}>
+                                    English Male 5sec</option>
+                                <option value="tigregna"
+                                    {{ session('game_setup.caller_language') == 'tigregna' ? 'selected' : '' }}>
+                                    Tigregna</option>
                             </select>
 
                         </div>
