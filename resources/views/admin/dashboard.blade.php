@@ -120,10 +120,10 @@
                     @foreach ($branches as $branch)
                         <tr>
                             <td class="border px-4 py-2">{{ $date ?: "$startDate to $endDate" }}</td>
-                            <td class="border px-4 py-2">{{ $branch->name }}</td>
-                            <td class="border px-4 py-2">{{ $branch->agent->user->name ?? 'No Agent' }}</td>
+                            <td class="border px-4 py-2">{{ $branch->user->name }}</td>
+                            <td class="border px-4 py-2">{{ $branch->agent->name ?? 'No Agent' }}</td>
                             <td class="border px-4 py-2">{{ $branch->totalGames }}</td>
-                            <td class="border px-4 py-2">{{ $branch->current_balance }}</td>
+                            <td class="border px-4 py-2">{{ $branch->user->current_balance }}</td>
                             <td class="border px-4 py-2">{{ $branch->totalProfit }}</td>
                         </tr>
                     @endforeach

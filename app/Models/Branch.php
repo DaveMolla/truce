@@ -18,7 +18,7 @@ class Branch extends Model
 
     public function agent()
     {
-        return $this->belongsTo(Agent::class);
+        return $this->belongsTo(User::class, 'agent_id');
     }
     public function game()
     {

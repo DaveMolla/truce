@@ -113,35 +113,36 @@ class AdminController extends Controller
      * @return \Illuminate\View\View
      */
     public function dashboard(Request $request)
-{
-    $user = Auth::user();
-    if ($user->role !== 'admin') {
-        return redirect()->back();
-    }
-
-    $date = $request->input('selected_date');
-    $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
-    $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
-
-    $branches = User::where('role', 'branch')->paginate(10);
-    $totalProfitSum = 0;
-
-    foreach ($branches as $branch) {
-        $query = Game::where('branch_user_id', $branch->id);
-
-        if ($date) {
-            $query->whereDate('created_at', $date);
-        } else {
-            $query->whereBetween('created_at', [$startDate, $endDate]);
+    {
+        $user = Auth::user();
+        if ($user->role !== 'admin') {
+            return redirect()->back();
         }
 
-        $branch->totalGames = $query->count();
-        $branch->totalProfit = $query->sum('profit');  // Assuming 'profit' is a column
-        $totalProfitSum += $branch->totalProfit;
-    }
+        $date = $request->input('selected_date');
+        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
+        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
 
-    return view('admin.dashboard', compact('branches', 'date', 'totalProfitSum', 'startDate', 'endDate'));
-}
+        $branches = Branch::with('agent')->paginate(10);
+        // dd($branches);
+        $totalProfitSum = 0;
+
+        foreach ($branches as $branch) {
+            $query = Game::where('branch_user_id', $branch->id);
+
+            if ($date) {
+                $query->whereDate('created_at', $date);
+            } else {
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            }
+
+            $branch->totalGames = $query->count();
+            $branch->totalProfit = $query->sum('profit');
+            $totalProfitSum += $branch->totalProfit;
+        }
+
+        return view('admin.dashboard', compact('branches', 'date', 'totalProfitSum', 'startDate', 'endDate'));
+    }
 
 
     public function manageAgentAccount()
