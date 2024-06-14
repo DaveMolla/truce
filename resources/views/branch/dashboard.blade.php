@@ -244,12 +244,15 @@
                                 <option value="amharic_female_3sec"
                                     {{ session('game_setup.caller_language') == 'amharic_female_3sec' ? 'selected' : '' }}>
                                     Amharic Female 3sec</option>
+                                <option value="amharic_female_5sec"
+                                    {{ session('game_setup.caller_language') == 'amharic_female_5sec' ? 'selected' : '' }}>
+                                    Amharic Female 5sec</option>
                                 <option value="english_female_3sec"
                                     {{ session('game_setup.caller_language') == 'english_female_3sec' ? 'selected' : '' }}>
                                     English Female 3sec</option>
-                                {{-- <option value="amharic_male"
-                                    {{ session('game_setup.caller_language') == 'amharic_male' ? 'selected' : '' }}>
-                                    Amharic Male 3sec</option> --}}
+                                <option value="amharic_male_5sec"
+                                    {{ session('game_setup.caller_language') == 'amharic_male_5sec' ? 'selected' : '' }}>
+                                    Amharic Male 5sec</option>
                                 <option value="english_male_3sec"
                                     {{ session('game_setup.caller_language') == 'english_male_3sec' ? 'selected' : '' }}>
                                     English Male 3sec</option>
