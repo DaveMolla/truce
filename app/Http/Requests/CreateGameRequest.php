@@ -22,8 +22,14 @@ class CreateGameRequest extends FormRequest
     public function rules()
     {
         return [
-            'bet_amount' => 'required|numeric|min:1',
+            'bet_amount' => 'required|numeric|min:5',
             'selected_numbers' => 'required|min:1',
+            // 'selected_numbers' => ['required', 'string', function($attribute, $value, $fail) {
+            //     $numbers = explode(',', $value);
+            //     if (count($numbers) < 5) {
+            //         $fail('At least 5 numbers must be selected.');
+            //     }
+            // }],
             'call_speed' => 'required|string|in:very_fast,fast',
             'caller_language' => 'required|string',
             'winning_pattern' => 'required|exists:winning_patterns,id',
@@ -35,7 +41,7 @@ class CreateGameRequest extends FormRequest
         return [
             'bet_amount.required' => 'The bet amount is required.',
             'bet_amount.numeric' => 'The bet amount must be a number.',
-            'bet_amount.min' => 'The bet amount must be at least 1.',
+            'bet_amount.min' => 'The bet amount must be at least 5 Birr.',
             // 'selected_numbers.required' => 'At least one card must be selected.',
             // 'selected_numbers.array' => 'Selected numbers must be an array.',
             'selected_numbers.min' => 'At least one card must be selected.',

@@ -271,7 +271,7 @@
                     <input type="hidden" name="number_of_selected_numbers" id="number_of_selected_numbers">
                     <input type="hidden" name="total_amount" id="total_amount">
 
-                    <button type="submit" style="background-color: #019DD6;"
+                    <button type="submit" id="createGameButton" style="background-color: #019DD6;"
                         class="w-full text-gray-100 font-bold py-2 px-4 rounded mt-4" style="margin-right: 100px">
                         Create Game
                     </button>
@@ -310,6 +310,7 @@
             const resetButton = document.getElementById('reset-button');
             const announcementButton = document.getElementById('announcementButton');
             const announcementSound = new Audio('/audios/announcement.mp3');
+            const createGameButton = document.getElementById('createGameButton'); // Now targeting by ID
 
             announcementButton.addEventListener('click', function() {
                 announcementSound.play().catch(e => {
@@ -327,6 +328,9 @@
                 totalAmountInput.value = totalAmount; // Update the hidden input
             }
 
+            function updateButtonState() {
+                createGameButton.disabled = selectedNumbers.length < 5;
+            }
             numberButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const cardId = this.dataset.cardId;
@@ -340,11 +344,14 @@
                     selectedNumbersInput.value = selectedNumbers.join(',');
                     numberOfSelectedNumbersInput.value = selectedNumbers.length;
                     updateTotalAmount(); // Update total amount whenever selection changes
+                    updateButtonState(); // Update the state of the create game button
                 });
             });
 
-            betAmountInput.addEventListener('input', updateTotalAmount);
-
+            betAmountInput.addEventListener('input', function() {
+                updateTotalAmount(); // Update total amount on bet amount change
+                updateButtonState(); // Also check button state on input change
+            });
             winningPatternSelect.addEventListener('change', function() {
                 const selectedOption = this.options[this.selectedIndex];
                 const patternData = JSON.parse(selectedOption.dataset.pattern);
@@ -426,11 +433,13 @@
                 selectedNumbersInput.value = '';
                 numberOfSelectedNumbersInput.value = 0;
                 updateTotalAmount(); // Reset total amount
+                updateButtonState(); // Reset the state of the create game button
             });
 
             // Trigger change event to load the default pattern on page load
             winningPatternSelect.dispatchEvent(new Event('change'));
             updateTotalAmount(); // Update total amount on page load
+            updateButtonState();
 
         });
     </script>
