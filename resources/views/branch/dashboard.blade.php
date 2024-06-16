@@ -230,8 +230,8 @@
                             <label for="call_speed" class="block mb-2 text-sm font-medium text-white">Call speed</label>
                             <select id="call_speed" name="call_speed"
                                 class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5">
-                                <option value="very_fast">Very Fast (3s)</option>
-                                <option value="fast">Fast (5s)</option>
+                                <option value="very_fast" {{ session('game_setup.call_speed') == 'very_fast' ? 'selected' : '' }}>Very Fast (3s)</option>
+                                <option value="fast" {{ session('game_setup.call_speed') == 'fast' ? 'selected' : '' }}>Fast (5s)</option>
                                 <!-- Add more options as needed -->
                             </select>
                         </div>
