@@ -79,7 +79,7 @@ class AgentController extends Controller
     public function dashboard()
     {
         $agent = Agent::where('user_id', Auth::user()->id)->first();
-        $branches = Branch::where('agent_id', $agent->id)->orderBy('created_at', 'desc')->paginate(1);
+        $branches = Branch::where('agent_id', $agent->id)->orderBy('created_at', 'desc')->paginate(10);
 
         return view('agent.dashboard', compact('branches'));
     }
