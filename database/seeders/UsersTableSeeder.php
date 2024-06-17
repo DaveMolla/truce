@@ -19,30 +19,30 @@ class UsersTableSeeder extends Seeder
     public function run(): void
     {
         // Create users
-        $admin = User::create([
-            'name' => 'Admin User',
-            'phone' => '0918810849',
-            'role' => 'admin',
-            'address' => 'Demoz-Admin',
-            'password' => Hash::make('password'),
-        ]);
+        // $admin = User::create([
+        //     'name' => 'Admin User',
+        //     'phone' => '0918810849',
+        //     'role' => 'admin',
+        //     'address' => 'Demoz-Admin',
+        //     'password' => Hash::make('password'),
+        // ]);
 
-        $agentUser = User::create([
-            'name' => 'Agent User',
-            'phone' => '1111111111',
-            'role' => 'agent',
-            'address' => 'Agent Address',
-            'password' => Hash::make('password'),
-        ]);
+        // $agentUser = User::create([
+        //     'name' => 'Agent User',
+        //     'phone' => '1111111111',
+        //     'role' => 'agent',
+        //     'address' => 'Agent Address',
+        //     'password' => Hash::make('password'),
+        // ]);
 
-        $branchUser = User::create([
-            'name' => 'Branch User',
-            'phone' => '2222222222',
-            'role' => 'branch',
-            'address' => 'Branch Address',
-            'password' => Hash::make('password'),
-            'cut_off_percent' => '20'
-        ]);
+        // $branchUser = User::create([
+        //     'name' => 'Branch User',
+        //     'phone' => '2222222222',
+        //     'role' => 'branch',
+        //     'address' => 'Branch Address',
+        //     'password' => Hash::make('password'),
+        //     'cut_off_percent' => '20'
+        // ]);
         $superAgentUser = User::create([
             'name' => 'Super Agent 2',
             'phone' => '3333333334',
@@ -53,9 +53,9 @@ class UsersTableSeeder extends Seeder
         ]);
 
         // Create agent
-        $agent = Agent::create([
-            'user_id' => $agentUser->id,
-        ]);
+        // $agent = Agent::create([
+        //     'user_id' => $agentUser->id,
+        // ]);
 
         $superAgent = SuperAgent::create([
             'user_id' => $superAgentUser->id,
@@ -66,8 +66,8 @@ class UsersTableSeeder extends Seeder
         //     'user_id' => $branchUser->id,
         //     'agent_id' => $agent->id,
         // ]);
-        $branch = Branch::create([
-            'user_id' => $branchUser->id,
-        ]);
+        // $branch = Branch::create([
+        //     'user_id' => $branchUser->id,
+        // ]);
     }
 }
