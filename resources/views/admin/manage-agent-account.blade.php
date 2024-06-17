@@ -36,7 +36,7 @@
                         <a href="{{ route('admin.dashboard') }}" class="text-lg hover:text-gray-400">Dashboard</a>
                     </li>
                     <li class="mb-4">
-                        <a href="{{ route('admin.super-agent') }}"
+                        <a href="{{ route('admin.manage-super-agent-account') }}"
                             class="text-lg hover:text-gray-400">Manage
                             Super Agent Account</a>
                     </li>
@@ -103,7 +103,7 @@
                     @foreach ($agents as $agent)
                         <tr>
                             <td>{{ $rowNumber++ }}</td>
-                            <td>{{ $agent->agent->superAgent->user->name }}</td>
+                            <td>{{ $agent->agent->superAgent->user->name ?? 'No S.A.'}}</td>
                             <td>{{ $agent->name }}</td>
                             <td>{{ $agent->address }}</td>
                             <td>{{ $agent->phone }}</td>
