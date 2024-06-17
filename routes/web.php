@@ -7,6 +7,7 @@ use App\Http\Controllers\AgentController;
 use App\Http\Controllers\BingoCardController;
 use App\Http\Controllers\BingoController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\SuperAgentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -24,6 +25,14 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('admin/manage-branch-account', [AdminController::class, 'manageBranchAccount'])->name('admin.manage-branch-account');
     Route::post('admin/top-up-agent', [AdminController::class, 'topUpAgent'])->name('admin.top-up-agent');
     Route::post('admin/withdraw-agent', [AdminController::class, 'withdrawAgent'])->name('admin.withdraw-agent');
+
+    Route::get('admin/manage-super-agent-account', [AdminController::class, 'manageSuperAgentAccount'])->name('admin.manage-super-agent-account');
+    Route::post('admin/top-up-super-agent', [AdminController::class, 'topUpSuperAgent'])->name('admin.top-up-super-agent');
+    Route::post('admin/withdraw-super-agent', [AdminController::class, 'withdrawSuperAgent'])->name('admin.withdraw-super-agent');
+    Route::post('admin/update-super-agent-password', [AdminController::class, 'updateSuperAgentPassword'])->name('admin.update-super-agent-password');
+    Route::post('admin/assign-agent', [AdminController::class, 'assignAgent'])->name('admin.assign-agent');
+    // Route::post('super-agent/store', [SuperAgentController::class, 'register'])->name('super-agent.store');
+
     Route::post('admin/top-up-branch', [AdminController::class, 'topUpBranch'])->name('admin.top-up-branch');
     Route::post('admin/withdraw-branch', [AdminController::class, 'withdrawBranch'])->name('admin.withdraw-branch');
     Route::post('admin/assign-branch', [AdminController::class, 'assignBranch'])->name('admin.assign-branch');
@@ -35,6 +44,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::get('branch/register', [BranchController::class, 'register'])->name('branch.register');
     Route::post('branch/store', [BranchController::class, 'store'])->name('branch.store');
+
+    Route::get('super-agent/register', [SuperAgentController::class, 'register'])->name('super-agent.register');
+    Route::post('super-agent/store', [SuperAgentController::class, 'store'])->name('super-agent.store');
 
     Route::post('admin/update-agent-password', [AdminController::class, 'updateAgentPassword'])->name('admin.update-agent-password');
     Route::post('admin/update-branch-password', [AdminController::class, 'updateBranchPassword'])->name('admin.update-branch-password');
@@ -57,6 +69,17 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/agent/branches', [AgentController::class, 'branches'])->name('agent.branches');
     Route::post('/agent/branch/top-up', [AgentController::class, 'topUpBranch'])->name('agent.top-up-branch');
     Route::post('/agent/branch/withdraw', [AgentController::class, 'withdrawBranch'])->name('agent.withdraw-branch');
+});
+
+// SuperAgent routes
+Route::get('super-agent/login', [SuperAgentController::class, 'index'])->name('agent.login');
+Route::post('super-agent/login', [SuperAgentController::class, 'login']);
+Route::post('super-agent/logout', [SuperAgentController::class, 'logout'])->name('agent.logout');
+Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
+    Route::get('super-agent/dashboard', [SuperAgentController::class, 'dashboard'])->name('super-agent.dashboard');
+    Route::get('/super-agent/agents', [SuperAgentController::class, 'agents'])->name('super-agent.agents');
+    Route::post('/super-agent/agent/top-up', [SuperAgentController::class, 'topUpAgent'])->name('agent.top-up-agent');
+    Route::post('/super-agent/agent/withdraw', [SuperAgentController::class, 'withdrawAgent'])->name('agent.withdraw-agent');
 });
 
 // Branch routes

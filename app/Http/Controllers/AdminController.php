@@ -8,6 +8,7 @@ use App\Models\Agent;
 use App\Models\BingoCard;
 use App\Models\Branch;
 use App\Models\Game;
+use App\Models\SuperAgent;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -145,10 +146,11 @@ class AdminController extends Controller
 
     public function manageAgentAccount()
     {
+        $superAgents = SuperAgent::all();
         $agents = User::where('role', 'agent')->paginate(10);
         $user = Auth::user();
         if ($user->role === 'admin') {
-            return view('admin.manage-agent-account', compact('agents'));
+            return view('admin.manage-agent-account', compact('agents','superAgents'));
         }
 
         return redirect()->back();
@@ -161,6 +163,115 @@ class AdminController extends Controller
         $user = Auth::user();
         if ($user->role === 'admin') {
             return view('admin.manage-branch-account', compact('branches', 'agents'));
+        }
+
+        return redirect()->back();
+    }
+
+    public function manageSuperAgentAccount()
+    {
+        $superAgents = SuperAgent::all();
+        $agents = Agent::with('superAgent')->paginate(10);
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+            return view('admin.manage-super-agent-account', compact('superAgents', 'agents'));
+        }
+
+        return redirect()->back();
+    }
+
+    public function topUpSuperAgent(Request $request)
+    {
+        $request->validate([
+            'super_agent_id' => 'required|exists:users,id',
+            'amount' => 'required|numeric|min:1',
+        ]);
+        // dd($request->amount);
+
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+            $superAgent = SuperAgent::find($request->super_agent_id);
+            $superAgentUser = User::find($superAgent->user_id);
+            // $branch = User::find($request->branch_id);
+            // dd($branchUser);
+            $superAgentUser->current_balance += $request->amount;
+
+            // $branch->current_balance = ($branch->current_balance ?? 0) + $request->amount;
+            // $branch->save();
+            $superAgentUser->save();
+
+            return redirect()->back()->with('success', 'Amount topped up successfully!');
+        }
+
+        return redirect()->back();
+    }
+
+    public function withdrawSuperAgent(Request $request)
+    {
+        $request->validate([
+            'super_agent_id' => 'required|exists:users,id',
+            'amount' => 'required|numeric|min:1',
+        ]);
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+
+            $superAgent = SuperAgent::find($request->super_agent_id);
+
+            $superAgentUser = User::find($superAgent->user_id);
+            $superAgentUser->current_balance -= $request->amount;
+
+            // $branch->current_balance = max(($branch->current_balance ?? 0) - $request->amount, 0);
+            $superAgentUser->save();
+
+            return redirect()->back()->with('success', 'Amount withdrawn successfully!');
+        }
+
+        return redirect()->back();
+    }
+
+    public function updateSuperAgentPassword(Request $request)
+    {
+        $request->validate([
+            'super_agent_id' => 'required|exists:users,id',
+            'newPassword' => 'required|string',
+        ]);
+
+        $user = Auth::user();
+        // dd($request->branch_id);
+        if ($user->role == 'admin') {
+            $superAgent = SuperAgent::with('user')->find($request->super_agent_id);
+            $superAgent->user->update([
+                'password' => bcrypt($request->newPassword),
+            ]);
+
+            return redirect()->back()->with('success', 'Password changed successfully!');
+        }
+
+        return redirect()->back();
+    }
+
+    public function assignAgent(Request $request)
+    {
+        // dd($request->all());
+
+        $request->validate([
+            'agent_id' => 'required',
+            'super_agent_id' => 'required',
+        ]);
+        // dd($request->agent_id,$request->super_agent_id);
+
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+            $agent = Agent::find($request->agent_id);
+            // $agentUser = User::find($agent->user_id);
+
+
+            // dd($agent);
+            $agent->update([
+                'super_agent_id' => $request->super_agent_id,
+            ]);
+
+            return redirect()->back()->with('success', 'Agent assigned to Super Agent successfully!');
         }
 
         return redirect()->back();

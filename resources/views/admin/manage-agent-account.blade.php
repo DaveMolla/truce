@@ -36,6 +36,11 @@
                         <a href="{{ route('admin.dashboard') }}" class="text-lg hover:text-gray-400">Dashboard</a>
                     </li>
                     <li class="mb-4">
+                        <a href="{{ route('admin.manage-super-agent-account') }}"
+                            class="text-lg hover:text-gray-400">Manage
+                            Super Agent Account</a>
+                    </li>
+                    <li class="mb-4">
                         <a href="{{ route('admin.manage-agent-account') }}" class="text-lg hover:text-gray-400">Manage
                             Agent Account</a>
                     </li>
@@ -44,7 +49,8 @@
                             Branch Account</a>
                     </li>
                     <li class="mb-4">
-                        <a href="{{ route('bingo-cards.import-form') }}" class="text-lg hover:text-gray-400">Import Bingo Cards</a>
+                        <a href="{{ route('bingo-cards.import-form') }}" class="text-lg hover:text-gray-400">Import
+                            Bingo Cards</a>
                     </li>
                     <li class="mb-4">
                         <a href="{{ route('admin.cards') }}" class="text-lg hover:text-gray-400">Boards</a>
@@ -81,6 +87,7 @@
                 <thead>
                     <tr>
                         <th>No.</th>
+                        <th>Super Agent</th>
                         <th>Owner Name</th>
                         <th>Address</th>
                         <th>Phone No</th>
@@ -88,6 +95,7 @@
                         <th>Top-up</th>
                         <th>Withdraw</th>
                         <th>Change Password</th>
+                        <th>Assign</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,6 +103,7 @@
                     @foreach ($agents as $agent)
                         <tr>
                             <td>{{ $rowNumber++ }}</td>
+                            <td>{{ $agent->agent->superAgent->user->name }}</td>
                             <td>{{ $agent->name }}</td>
                             <td>{{ $agent->address }}</td>
                             <td>{{ $agent->phone }}</td>
@@ -115,6 +124,16 @@
                                     onclick="setChangePasswordModalData('{{ $agent->id }}', '{{ $agent->name }}')">Change
                                     Password</button>
                             </td>
+                            <td>
+                                {{-- <button data-modal-target="assign-modal" data-modal-toggle="assign-modal"
+                                    class="text-blue-500 hover:text-blue-700"
+                                    onclick="setAssignModalData('{{ $agent->id }}', '{{ $agent->name }}')">Assign</button> --}}
+                                <button data-modal-target="assign-modal" data-modal-toggle="assign-modal"
+                                    onclick="setAssignModalData('{{ $agent->agent->id }}', '{{ $agent->name }}')"
+                                    class="text-blue-500 hover:text-blue-700">Assign</button>
+                                    {{-- {{dd($agent->agent->id) }} --}}
+
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -125,7 +144,9 @@
 
             {{-- <a href="{{ route('agent.register') }}" class="mt-4 inline-block text-blue-500 hover:text-blue-700">Add
                 New</a> --}}
-            <a href="{{route('agent.register')}}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add New</a>
+            <a href="{{ route('agent.register') }}"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add
+                New</a>
 
         </div>
     </div>
@@ -139,7 +160,7 @@
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-4 border-b dark:border-gray-600">
                     <h3 class="text-lg font-semibold text-white">Change Password for <span
-                            id="AgentNamePassword">{{$agent->name}}</span></h3>
+                            id="AgentNamePassword">{{ $agent->name }}</span></h3>
                     <button type="button"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                         data-modal-toggle="change-password-modal">
@@ -191,8 +212,8 @@
                         data-modal-toggle="crud-modal">
                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                         </svg>
                         <span class="sr-only">Close modal</span>
                     </button>
@@ -314,6 +335,74 @@
             document.getElementById('currentBalanceWithdraw').value = currentBalance;
         }
     </script>
+
+    <div id="assign-modal" tabindex="-1" aria-hidden="true"
+        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-96 max-w-md md:max-w-sm max-h-full">
+            <!-- Modal content -->
+            <div class="relative bg-gray-500 rounded-lg shadow white:bg-gray-500">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        Assign Agent
+                    </h3>
+                    <button type="button"
+                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                        data-modal-toggle="assign-modal">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <!-- Modal Form -->
+                <form action="{{ route('admin.assign-agent') }}" method="POST" class="p-4 md:p-5">
+                    @csrf
+                    <input type="hidden" name="agent_id" id="agentIdAssign">
+                    <div class="grid gap-4 mb-4 grid-cols-2">
+                        <div class="col-span-2">
+                            <label for="agentNameAssign"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Agent Name</label>
+                            <input type="text" id="agentNameAssign"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                                readonly>
+                        </div>
+                        <div class="col-span-2 sm:col-span-1">
+                            <label for="super_agentId"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Super
+                                Agent</label>
+                            <select name="super_agent_id" id="super_agentId"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                                @foreach ($superAgents as $superAgent)
+                                    <option value="{{ $superAgent->id }}">{{ $superAgent->user->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" class="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded mr-2"
+                            data-modal-toggle="assign-modal">Cancel</button>
+                        <button type="submit"
+                            class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">Assign</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setAssignModalData(agentId, agentName) {
+            console.log(agentId);
+
+            document.getElementById('agentIdAssign').value = agentId;
+            document.getElementById('agentNameAssign').value = agentName;
+        }
+    </script>
+
 
     @vite('resources/js/app.js')
 </body>

@@ -64,4 +64,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Branch::class,'agent_id');
     }
+
+    public function superAgent()
+    {
+        return $this->hasOne(SuperAgent::class,'user_id','id');
+    }
 }

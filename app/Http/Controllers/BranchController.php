@@ -110,6 +110,9 @@ class BranchController extends Controller
                 case 'branch':
                     $route = 'branch.dashboard';
                     break;
+                case 'super_agent':
+                    $route = 'super-agent.dashboard';
+                    break;
                 default:
                     Auth::logout();
                     $route = 'default';

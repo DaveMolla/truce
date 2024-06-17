@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Branch Account</title>
+    <title>Manage super_agent Account</title>
     @vite('resources/css/app.css')
     <style>
         th,
@@ -60,7 +60,7 @@
         <!-- Main content -->
         <div class="flex-1 p-10">
             <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl font-bold">Manage Branch Account</h2>
+                <h2 class="text-2xl font-bold">Manage Super Agent Account</h2>
                 <div class="bg-blue-500 p-3 rounded-full">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
@@ -86,64 +86,58 @@
                 <thead>
                     <tr>
                         <th>No.</th>
-                        <th>Agent Name</th>
-                        <th>Owner Name</th>
+                        <th>Super Agent Name</th>
+                        {{-- <th>Owner Name</th> --}}
                         <th>Address</th>
                         <th>Phone No</th>
                         <th>Current Balance</th>
                         <th>Top-up</th>
                         <th>Withdraw</th>
                         <th>Change Password</th>
-                        <th>Set Cutoff Percent</th>
-                        <th>Assign</th>
+                        {{-- <th>Set Cutoff Percent</th> --}}
                     </tr>
                 </thead>
                 <tbody>
                     @php $rowNumber = 1; @endphp
-                    @foreach ($branches as $branch)
+                    @foreach ($superAgents as $superAgent)
                         <tr>
                             <td>{{ $rowNumber++ }}</td>
-                            <td>{{ $branch->agent->user->name ?? 'No Agent' }}</td>
-                            <td>{{ $branch->user->name }}</td>
-                            <td>{{ $branch->user->address }}</td>
-                            <td>{{ $branch->user->phone }}</td>
-                            <td>{{ $branch->user->current_balance ?? 0 }}</td>
+                            <td>{{ $superAgent->user->name ?? 'No Agent' }}</td>
+                            {{-- <td>{{ $superAgent->name }}</td> --}}
+                            <td>{{ $superAgent->user->address }}</td>
+                            <td>{{ $superAgent->user->phone }}</td>
+                            <td>{{ $superAgent->user->current_balance ?? 0 }}</td>
                             <td>
                                 <button data-modal-target="topup-modal" data-modal-toggle="topup-modal"
                                     class="text-blue-500 hover:text-blue-700"
-                                    onclick="setTopupModalData('{{ $branch->id }}', '{{ $branch->user->name }}', '{{ $branch->user->current_balance ?? 0 }}')">Top-up</button>
+                                    onclick="setTopupModalData('{{ $superAgent->id }}', '{{ $superAgent->user->name }}', '{{ $superAgent->user->current_balance ?? 0 }}')">Top-up</button>
                             </td>
                             <td>
                                 <button data-modal-target="withdraw-modal" data-modal-toggle="withdraw-modal"
                                     class="text-blue-500 hover:text-blue-700"
-                                    onclick="setWithdrawModalData('{{ $branch->id }}', '{{ $branch->user->name }}', '{{ $branch->user->current_balance ?? 0 }}')">Withdraw</button>
+                                    onclick="setWithdrawModalData('{{ $superAgent->id }}', '{{ $superAgent->user->name }}', '{{ $superAgent->user->current_balance ?? 0 }}')">Withdraw</button>
                             </td>
                             <td>
                                 <button data-modal-target="change-password-modal"
                                     data-modal-toggle="change-password-modal" class="text-blue-500 hover:text-blue-700"
-                                    onclick="setChangePasswordModalData('{{ $branch->id }}', '{{ $branch->user->name }}')">Change
+                                    onclick="setChangePasswordModalData('{{ $superAgent->id }}', '{{ $superAgent->user->name }}')">Change
                                     Password</button>
                             </td>
-                            <td>
+                            {{-- <td>
                                 <button data-modal-target="set-cutoff-modal" data-modal-toggle="set-cutoff-modal"
                                     class="text-blue-500 hover:text-blue-700"
-                                    onclick="setCutoffModalData('{{ $branch->id }}', '{{ $branch->user->name }}', '{{ $branch->user->cut_off_percent}}')">Set
+                                    onclick="setCutoffModalData('{{ $super_agent->id }}', '{{ $super_agent->user->name }}', '{{ $super_agent->user->cut_off_percent}}')">Set
                                     Cutoff Percent</button>
-                            </td>
-                            <td>
-                                <button data-modal-target="assign-modal" data-modal-toggle="assign-modal"
-                                    class="text-blue-500 hover:text-blue-700"
-                                    onclick="setAssignModalData('{{ $branch->id }}', '{{ $branch->user->name }}')">Assign</button>
-                            </td>
+                            </td> --}}
                         </tr>
                     @endforeach
                 </tbody>
             </table>
             <div class="mt-4">
-                {{ $branches->links() }}
+                {{-- {{ $superAgents->links() }} --}}
             </div>
 
-            <a href="{{ route('branch.register') }}"
+            <a href="{{ route('super-agent.register') }}"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add
                 New</a>
         </div>
@@ -159,7 +153,7 @@
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-4 border-b dark:border-gray-600">
                     <h3 class="text-lg font-semibold text-white">Set Cutoff Percent for <span
-                            id="branchNameCutoff">[Branch Name]</span></h3>
+                            id="super_agentNameCutoff">[super_agent Name]</span></h3>
                     <button type="button"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                         data-modal-toggle="set-cutoff-modal">
@@ -172,7 +166,7 @@
                 <!-- Modal body -->
                 <form action="{{ route('admin.set-cutoff') }}" method="POST" class="p-4">
                     @csrf
-                    <input type="hidden" name="branch_id" id="branchIdCutoff">
+                    <input type="hidden" name="super_agent_id" id="super_agentIdCutoff">
                     <div>
                         <label for="cutoffPercent" class="block text-sm font-medium text-white">Cutoff Percent</label>
                         <input type="number" name="cutoffPercent" id="cutoffPercent"
@@ -189,9 +183,9 @@
     </div>
 
     <script>
-        function setCutoffModalData(branchId, branchName, currentCutoff) {
-            document.getElementById('branchIdCutoff').value = branchId;
-            document.getElementById('branchNameCutoff').textContent = branchName;
+        function setCutoffModalData(super_agentId, super_agentName, currentCutoff) {
+            document.getElementById('super_agentIdCutoff').value = super_agentId;
+            document.getElementById('super_agentNameCutoff').textContent = super_agentName;
             document.getElementById('cutoffPercent').value = currentCutoff;
         }
     </script>
@@ -207,7 +201,7 @@
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-4 border-b dark:border-gray-600">
                     <h3 class="text-lg font-semibold text-white">Change Password for <span
-                            id="branchNamePassword">{{ $branch->user->name }}</span></h3>
+                            id="super_agentNamePassword">{{ $superAgent->user->name }}</span></h3>
                     <button type="button"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                         data-modal-toggle="change-password-modal">
@@ -218,9 +212,9 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <form action="{{ route('admin.update-branch-password') }}" method="POST" class="p-4">
+                <form action="{{ route('admin.update-super-agent-password') }}" method="POST" class="p-4">
                     @csrf
-                    <input type="hidden" name="branch_id" id="branchIdPassword">
+                    <input type="hidden" name="super_agent_id" id="super_agentIdPassword">
                     <div>
                         <label for="newPassword" class="block text-sm font-medium text-white">New Password</label>
                         <input type="password" name="newPassword" id="newPassword"
@@ -237,9 +231,9 @@
         </div>
     </div>
     <script>
-        function setChangePasswordModalData(branchId, branchName) {
-            document.getElementById('branchIdPassword').value = branchId;
-            document.getElementById('branchNamePassword').textContent = branchName;
+        function setChangePasswordModalData(super_agentId, super_agentName) {
+            document.getElementById('super_agentIdPassword').value = super_agentId;
+            document.getElementById('super_agentNamePassword').textContent = super_agentName;
         }
     </script>
 
@@ -252,7 +246,7 @@
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                        Topup Branch
+                        Topup super_agent
                     </h3>
                     <button type="button"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -266,15 +260,15 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <form action="{{ route('admin.top-up-branch') }}" method="POST" class="p-4 md:p-5">
+                <form action="{{ route('admin.top-up-super-agent') }}" method="POST" class="p-4 md:p-5">
                     @csrf
-                    <input type="hidden" name="branch_id" id="branchIdTopup">
+                    <input type="hidden" name="super_agent_id" id="super_agentIdTopup">
                     <div class="grid gap-4 mb-4 grid-cols-2">
                         <div class="col-span-2">
-                            <label for="branchNameTopup"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Branch
+                            <label for="super_agentNameTopup"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">super_agent
                                 Name</label>
-                            <input type="text" id="branchNameTopup"
+                            <input type="text" id="super_agentNameTopup"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 readonly>
                         </div>
@@ -306,9 +300,9 @@
     </div>
 
     <script>
-        function setTopupModalData(branchId, branchName, currentBalance) {
-            document.getElementById('branchIdTopup').value = branchId;
-            document.getElementById('branchNameTopup').value = branchName;
+        function setTopupModalData(super_agentId, super_agentName, currentBalance) {
+            document.getElementById('super_agentIdTopup').value = super_agentId;
+            document.getElementById('super_agentNameTopup').value = super_agentName;
             document.getElementById('currentBalanceTopup').value = currentBalance;
         }
     </script>
@@ -322,7 +316,7 @@
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                        Withdraw Branch
+                        Withdraw super_agent
                     </h3>
                     <button type="button"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -336,15 +330,15 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <form action="{{ route('admin.withdraw-branch') }}" method="POST" class="p-4 md:p-5">
+                <form action="{{ route('admin.withdraw-super-agent') }}" method="POST" class="p-4 md:p-5">
                     @csrf
-                    <input type="hidden" name="branch_id" id="branchIdWithdraw">
+                    <input type="hidden" name="super_agent_id" id="super_agentIdWithdraw">
                     <div class="grid gap-4 mb-4 grid-cols-2">
                         <div class="col-span-2">
-                            <label for="branchNameWithdraw"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Branch
+                            <label for="super_agentNameWithdraw"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">super_agent
                                 Name</label>
-                            <input type="text" id="branchNameWithdraw"
+                            <input type="text" id="super_agentNameWithdraw"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 readonly>
                         </div>
@@ -376,15 +370,15 @@
     </div>
 
     <script>
-        function setWithdrawModalData(branchId, branchName, currentBalance) {
-            document.getElementById('branchIdWithdraw').value = branchId;
-            document.getElementById('branchNameWithdraw').value = branchName;
+        function setWithdrawModalData(super_agentId, super_agentName, currentBalance) {
+            document.getElementById('super_agentIdWithdraw').value = super_agentId;
+            document.getElementById('super_agentNameWithdraw').value = super_agentName;
             document.getElementById('currentBalanceWithdraw').value = currentBalance;
         }
     </script>
 
     <!-- Assign Modal -->
-    <div id="assign-modal" tabindex="-1" aria-hidden="true"
+    {{-- <div id="assign-modal" tabindex="-1" aria-hidden="true"
         class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-96 max-w-md md:max-w-sm max-h-full">
             <!-- Modal content -->
@@ -392,7 +386,7 @@
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                        Assign Branch
+                        Assign super_agent
                     </h3>
                     <button type="button"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -406,15 +400,15 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <form action="{{ route('admin.assign-branch') }}" method="POST" class="p-4 md:p-5">
+                <form action="{{ route('admin.assign-super_agent') }}" method="POST" class="p-4 md:p-5">
                     @csrf
-                    <input type="hidden" name="branch_id" id="branchIdAssign">
+                    <input type="hidden" name="super_agent_id" id="super_agentIdAssign">
                     <div class="grid gap-4 mb-4 grid-cols-2">
                         <div class="col-span-2">
-                            <label for="branchNameAssign"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Branch
+                            <label for="super_agentNameAssign"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">super_agent
                                 Name</label>
-                            <input type="text" id="branchNameAssign"
+                            <input type="text" id="super_agentNameAssign"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 readonly>
                         </div>
@@ -442,10 +436,10 @@
     </div>
 
     <script>
-        function setAssignModalData(branchId, branchName) {
-            document.getElementById('branchIdAssign').value = branchId;
-            document.getElementById('branchNameAssign').value = branchName;
-        }
+        function setAssignModalData(super_agentId, super_agentName) {
+            document.getElementById('super_agentIdAssign').value = super_agentId;
+            document.getElementById('super_agentNameAssign').value = super_agentName;
+        } --}}
     </script>
 
     @vite('resources/js/app.js')

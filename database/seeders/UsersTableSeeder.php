@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Agent;
 use App\Models\Branch;
+use App\Models\SuperAgent;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -42,10 +43,22 @@ class UsersTableSeeder extends Seeder
             'password' => Hash::make('password'),
             'cut_off_percent' => '20'
         ]);
+        $superAgentUser = User::create([
+            'name' => 'Super Agent 2',
+            'phone' => '3333333334',
+            'role' => 'super_agent',
+            'address' => 'Super Agent Address',
+            'password' => Hash::make('password'),
+            // 'cut_off_percent' => '20'
+        ]);
 
         // Create agent
         $agent = Agent::create([
             'user_id' => $agentUser->id,
+        ]);
+
+        $superAgent = SuperAgent::create([
+            'user_id' => $superAgentUser->id,
         ]);
 
         // // Create branch and assign to agent

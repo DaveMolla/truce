@@ -21,6 +21,10 @@
                         <a href="{{ route('admin.dashboard') }}" class="text-lg hover:text-gray-400">Dashboard</a>
                     </li>
                     <li class="mb-4">
+                        <a href="{{ route('admin.manage-super-agent-account') }}" class="text-lg hover:text-gray-400">Manage
+                            Super Agent Account</a>
+                    </li>
+                    <li class="mb-4">
                         <a href="{{ route('admin.manage-agent-account') }}" class="text-lg hover:text-gray-400">Manage Agent Account</a>
                     </li>
                     <li class="mb-4">
