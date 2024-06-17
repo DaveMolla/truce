@@ -93,7 +93,7 @@ class SuperAgentController extends Controller
             'user_id' => $superAgentUser->id,
         ]);
 
-        return redirect()->route('admin.manage-super-agent-account')->with('success', 'Super Agent registered successfully!');
+        return redirect()->route('admin.super-agent')->with('success', 'Super Agent registered successfully!');
     }
 
     // public function branches()

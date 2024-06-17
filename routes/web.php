@@ -20,15 +20,13 @@ Route::get('admin/login', [AdminController::class, 'index'])->name('admin.login'
 Route::post('admin/login', [AdminController::class, 'login']);
 Route::post('admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-    Route::get('admin/manage-super-agent-account', [AdminController::class, 'manageSuperAgentAccount'])->name('admin.manage-super-agent-account');
-
     Route::get('admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('admin/manage-agent-account', [AdminController::class, 'manageAgentAccount'])->name('admin.manage-agent-account');
     Route::get('admin/manage-branch-account', [AdminController::class, 'manageBranchAccount'])->name('admin.manage-branch-account');
     Route::post('admin/top-up-agent', [AdminController::class, 'topUpAgent'])->name('admin.top-up-agent');
     Route::post('admin/withdraw-agent', [AdminController::class, 'withdrawAgent'])->name('admin.withdraw-agent');
 
-
+    Route::get('admin/manage-super-agent-account', [AdminController::class, 'manageSuperAgentAccount'])->name('admin.super-agent');
     Route::post('admin/top-up-super-agent', [AdminController::class, 'topUpSuperAgent'])->name('admin.top-up-super-agent');
     Route::post('admin/withdraw-super-agent', [AdminController::class, 'withdrawSuperAgent'])->name('admin.withdraw-super-agent');
     Route::post('admin/update-super-agent-password', [AdminController::class, 'updateSuperAgentPassword'])->name('admin.update-super-agent-password');
