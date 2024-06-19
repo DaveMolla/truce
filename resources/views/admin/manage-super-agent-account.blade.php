@@ -134,7 +134,7 @@
                 </tbody>
             </table>
             <div class="mt-4">
-                {{-- {{ $superAgents->links() }} --}}
+                {{ $superAgents->links() }}
             </div>
 
             <a href="{{ route('super-agent.register') }}"

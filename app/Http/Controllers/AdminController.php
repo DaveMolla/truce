@@ -170,7 +170,7 @@ class AdminController extends Controller
 
     public function manageSuperAgentAccount()
     {
-        $superAgents = SuperAgent::all();
+        $superAgents = SuperAgent::paginate(10);
         $agents = Agent::with('superAgent')->paginate(10);
         $user = Auth::user();
         if ($user->role === 'admin') {
