@@ -679,6 +679,8 @@
                         let callerLanguage = gameSetup.caller_language || 'amharic_female';
                         let audioPath = `/audios/${callerLanguage}/${data.number}.mp3`;
                         let audio = new Audio(audioPath);
+                        
+                        audio.preload = 'auto';
 
                         audio.onended = () => {
                             resetCountdown(); // Reset and start the countdown after the audio ends
@@ -690,6 +692,8 @@
                             callerLanguage = 'amharic_female';
                             audioPath = `/audios/${callerLanguage}/${data.number}.mp3`;
                             audio = new Audio(audioPath);
+
+                            audio.preload = 'auto';
 
                             audio.onended = () => {
                                 resetCountdown
