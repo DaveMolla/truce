@@ -191,185 +191,45 @@ class BranchController extends Controller
 
     }
 
-    // public function createGame(Request $request)
-    // {
-    //     $request->validate([
-    //         'bet_amount' => 'required|integer|min:1',
-    //         'number_of_selected_numbers' => 'required|integer|min:1',
-    //         'selected_numbers' => 'required|string',
-    //         'winning_pattern' => 'required|exists:winning_patterns,id',
-    //     ]);
 
-    //     $totalBetAmount = $request->bet_amount * $request->number_of_selected_numbers;
-
-    //     Game::create([
-    //         'bet_amount' => $request->bet_amount,
-    //         'total_players' => $request->number_of_selected_numbers,
-    //         'total_calls' => 0, // Assuming this starts at 0
-    //         'status' => 'pending',
-    //         'total_bet_amount' => $totalBetAmount,
-    //         'profit' => 0, // Assuming profit calculation is done elsewhere
-    //     ]);
-
-    //     return redirect()->route('branch.game-page')->with('success', 'Game created successfully!');
-    // }
-
-    // public function createGame(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'bet_amount' => 'required|numeric',
-    //         'selected_numbers' => 'required|string',
-    //         'winning_pattern' => 'required|integer',
-    //     ]);
-
-    //     $selectedNumbers = explode(',', $validated['selected_numbers']);
-    //     $numberOfSelectedNumbers = count($selectedNumbers);
-    //     $totalAmount = $validated['bet_amount'] * $numberOfSelectedNumbers;
-
-    //     // Create the game record in the database
-    //     $game = Game::create([
-    //         'bet_amount' => $validated['bet_amount'],
-    //         'total_players' => $numberOfSelectedNumbers,
-    //         'total_calls' => 0,
-    //         'status' => 'pending',
-    //         'total_bet_amount' => $totalAmount,
-    //         'profit' => 0,
-    //     ]);
-
-    //     // Optionally, associate selected cards with the game
-    //     // ...
-
-    //     return redirect()->route('branch.show-game-page');
-    // }
-
-    // public function createGame(Request $request)
-    // {
-
-    //     $games = Game::all();
-
-    //     $selectedNumbers = explode(',', $request->input('selected_numbers'
-
-    //     $branch_user = User::where('role', 'branch', Auth::user()->id)->first();
-    //     // dd($branch_user);
-    //     // $branch_user = Branch::
-    //     // $cutOffPercent = $branch_user->cut_off_percent ?? 0;
-    //     $user = Auth::user();
-    //     $cutOffPercent = $user->cut_off_percent ?? 0;
-    //     $totalBetAmount = $request->bet_amount * count($selectedNumbers);
-
-    //     $profit = ($cutOffPercent / 100) * $totalBetAmount;
-
-    //     $game = Game::create([
-    //         'branch_user_id' => $branch_user->id,
-    //         'bet_amount' => $request->bet_amount,
-    //         'total_players' => count($selectedNumbers),
-    //         'total_calls' => 0,
-    //         'status' => 'pending',
-    //         'total_bet_amount' => $totalBetAmount,
-    //         'profit' => $profit,
-    //     ]);
-
-    //     // Associate selected cards with the game
-    //     // $game->bingoCards()->attach($request->input('selected_numbers'
-
-    //     return view('branch.game-page', ['game' => $game->id]);
-    // }
     public function createGame(CreateGameRequest $request)
-    {
-        $user = Auth::user();
-        if ($user->role === 'branch') {
+{
+    $user = Auth::user();
+    if ($user->role === 'branch') {
+        $selectedNumbers = explode(',', $request->input('selected_numbers'));
+        $totalBetAmount = $request->bet_amount * count($selectedNumbers);
 
-            $selectedNumbers = explode(',', $request->input('selected_numbers'));
+        // Initialize profit as zero
+        $profit = 0;
 
-            // $branch_user = User::where('role', 'branch', Auth::user()->id)->first();
-            $user = Auth::user();
-            $cutOffPercent = $user->cut_off_percent ?? 0;
-            $totalBetAmount = $request->bet_amount * count($selectedNumbers);
+        $game = Game::create([
+            'branch_user_id' => $user->id,
+            'bet_amount' => $request->bet_amount,
+            'total_players' => count($selectedNumbers),
+            'total_calls' => 0,
+            'status' => 'pending',
+            'total_bet_amount' => $totalBetAmount,
+            'profit' => $profit,
+        ]);
 
-            $profit = ($cutOffPercent / 100) * $totalBetAmount;
-            // dd($profit);
-            $user_balance = $user->current_balance;
-
-            if ($user->current_balance <= $profit) {
-                return back()->withErrors([
-                    'phone' => 'You do not have enough balance.',
-                ]);
-            }
-
-            // dd($request->all());
-            $game = Game::create([
-                'branch_user_id' => $user->id,
+        session(['selected_numbers' => $selectedNumbers]);
+        session([
+            'gameId' => $game->id,
+            'game_setup' => [
                 'bet_amount' => $request->bet_amount,
-                // dd($user),
-                'total_players' => count($selectedNumbers),
-                'total_calls' => 0,
-                'status' => 'pending',
-                'total_bet_amount' => $totalBetAmount,
-                'profit' => $profit,
-                // dd($user)
+                'winning_pattern' => $request->winning_pattern,
+                'call_speed' => $request->call_speed,
+                'caller_language' => $request->caller_language,
+            ],
+        ]);
+        session()->forget('callHistory');
 
-            ]);
-
-            $user->update([
-                'current_balance' => $user_balance - $profit,
-            ]);
-            $selectedNumbers = explode(',', $request->input('selected_numbers', ''));
-            session(['selected_numbers' => $selectedNumbers]);
-            session([
-                'gameId' => $game->id,
-                'game_setup' => [
-                    'bet_amount' => $request->bet_amount,
-                    'winning_pattern' => $request->winning_pattern,
-                    'call_speed' => $request->call_speed,
-                    'caller_language' => $request->caller_language,
-                ],
-            ]);
-            session()->forget('callHistory');
-            // dd($selectedNumbers);
-
-            // Store game data in session
-            session()->put('gameId', $game->id);
-            session()->put('winning_pattern', $request->input('winning_pattern') ?? []);
-            session()->put('selected_numbers', $request->input('selected_numbers') ?? []);
-            $callSpeedMapping = [
-                'very_fast' => 3000,
-                'fast' => 5000,
-            ];
-            $callSpeed = $callSpeedMapping[$request->input('call_speed')] ?? 5000;
-            session()->put('caller_speed', $callSpeed);
-
-            return redirect()->route('bingo.index');
-        }
-
-        return redirect()->back();
+        return redirect()->route('bingo.index');
     }
 
-    // public function gamePage($gameId)
-    // {
-    //     $user = Auth::user();
-    //     if ($user->role === 'branch') {
+    return redirect()->back();
+}
 
-    //         $game = Game::with(['bingoCards', 'calledNumbers'])->findOrFail($gameId);
-    //         $previousCall = $game->calledNumbers->last();
-
-    //         return view('branch.game-page', [
-    //             'game' => $game,
-    //             'previousCall' => $previousCall
-    //         ]);
-    //     }
-    //     return redirect()->back();
-    // }
-
-    // public function showGamePage()
-    // {
-    //     return view('branch.game-page');
-    // }
-    // public function gamePage(Request $request)
-    // {
-    //     $game = Game::findOrFail($request->game);
-
-    //     return view('branch.game-page', compact('game'));
-    // }
 
     public function cards()
     {
