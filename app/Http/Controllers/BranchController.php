@@ -193,42 +193,42 @@ class BranchController extends Controller
 
 
     public function createGame(CreateGameRequest $request)
-{
-    $user = Auth::user();
-    if ($user->role === 'branch') {
-        $selectedNumbers = explode(',', $request->input('selected_numbers'));
-        $totalBetAmount = $request->bet_amount * count($selectedNumbers);
+    {
+        $user = Auth::user();
+        if ($user->role === 'branch') {
+            $selectedNumbers = explode(',', $request->input('selected_numbers'));
+            $totalBetAmount = $request->bet_amount * count($selectedNumbers);
 
-        // Initialize profit as zero
-        $profit = 0;
+            // Initialize profit as zero
+            $profit = 0;
 
-        $game = Game::create([
-            'branch_user_id' => $user->id,
-            'bet_amount' => $request->bet_amount,
-            'total_players' => count($selectedNumbers),
-            'total_calls' => 0,
-            'status' => 'pending',
-            'total_bet_amount' => $totalBetAmount,
-            'profit' => $profit,
-        ]);
-
-        session(['selected_numbers' => $selectedNumbers]);
-        session([
-            'gameId' => $game->id,
-            'game_setup' => [
+            $game = Game::create([
+                'branch_user_id' => $user->id,
                 'bet_amount' => $request->bet_amount,
-                'winning_pattern' => $request->winning_pattern,
-                'call_speed' => $request->call_speed,
-                'caller_language' => $request->caller_language,
-            ],
-        ]);
-        session()->forget('callHistory');
+                'total_players' => count($selectedNumbers),
+                'total_calls' => 0,
+                'status' => 'pending',
+                'total_bet_amount' => $totalBetAmount,
+                'profit' => $profit,
+            ]);
 
-        return redirect()->route('bingo.index');
+            session(['selected_numbers' => $selectedNumbers]);
+            session([
+                'gameId' => $game->id,
+                'game_setup' => [
+                    'bet_amount' => $request->bet_amount,
+                    'winning_pattern' => $request->winning_pattern,
+                    'call_speed' => $request->call_speed,
+                    'caller_language' => $request->caller_language,
+                ],
+            ]);
+            session()->forget('callHistory');
+
+            return redirect()->route('bingo.index');
+        }
+
+        return redirect()->back();
     }
-
-    return redirect()->back();
-}
 
 
     public function cards()
