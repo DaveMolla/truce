@@ -72,9 +72,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 });
 
 // SuperAgent routes
-Route::get('super-agent/login', [SuperAgentController::class, 'index'])->name('agent.login');
+Route::get('super-agent/login', [SuperAgentController::class, 'index'])->name('super-agent.login');
 Route::post('super-agent/login', [SuperAgentController::class, 'login']);
-Route::post('super-agent/logout', [SuperAgentController::class, 'logout'])->name('agent.logout');
+Route::post('super-agent/logout', [SuperAgentController::class, 'logout'])->name('super-agent.logout');
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     Route::get('super-agent/dashboard', [SuperAgentController::class, 'dashboard'])->name('super-agent.dashboard');
     Route::get('/super-agent/agents', [SuperAgentController::class, 'agents'])->name('super-agent.agents');
