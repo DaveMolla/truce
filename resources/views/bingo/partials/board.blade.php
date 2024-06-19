@@ -449,23 +449,8 @@
                 </script>
 
 
-                {{-- @if (session('modal'))
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            var modal = document.getElementById('myModal');
-                            document.getElementById('modal-text').textContent = "{{ session('modal') }}";
-                            modal.style.display = "block";
-
-                            window.onclick = function(event) {
-                                if (event.target == modal) {
-                                    modal.style.display = 'none';
-                                }
-                            }
-                        });
-                    </script>
-                @endif --}}
-                <audio id="pauseAudio" src="audios/Bingo.mp3" preload="auto"></audio>
-                <audio id="startAudio" src="audios/Start.mp3" preload="auto"></audio>
+                {{-- <audio id="pauseAudio" src="audios/Bingo.mp3" preload="auto"></audio>
+                <audio id="startAudio" src="audios/Start.mp3" preload="auto"></audio> --}}
 
 
                 <form action="{{ route('bingo.call') }}" method="POST" id="call-form">
@@ -614,33 +599,33 @@
 
             function startCalling() {
                 if (!intervalId) { // Ensure that no interval is running before starting a new one
-                    startAudio.play(); // Play start sound
+                    // startAudio.play(); // Play start sound
 
-                    startAudio.onended = function() { // When the start sound ends, start the countdown
+                    // startAudio.onended = function() { // When the start sound ends, start the countdown
                         intervalId = setInterval(() => {
                             if (totalCalls >= 75) {
                                 pauseCalling();
                                 alert('Maximum number of calls reached.');
                                 return;
                             }
-                            if (countdown > 0) {
+                            if (countdown > -1) {
                                 countdown -= 1;
                                 countdownDisplay.textContent = `${countdown}s`;
                             }
-                            if (countdown <= 0 && !
+                            if (countdown <= -1 && !
                                 isFetching) { // Only fetch next number if not already fetching
                                 fetchNextNumber();
                             }
                         }, 1000);
                         isRunning = true;
                         nextNumberBtn.textContent = 'Pause';
-                    };
+                    // };
                 }
             }
 
             function pauseCalling() {
                 if (intervalId) {
-                    pauseAudio.play(); // Play pause sound
+                    // pauseAudio.play(); // Play pause sound
                     clearInterval(intervalId);
                     intervalId = null; // Clear the interval ID
                 }
