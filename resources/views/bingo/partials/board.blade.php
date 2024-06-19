@@ -602,24 +602,23 @@
                     // startAudio.play(); // Play start sound
 
                     // startAudio.onended = function() { // When the start sound ends, start the countdown
-                        intervalId = setInterval(() => {
-                            if (totalCalls >= 75) {
-                                pauseCalling();
-                                alert('Maximum number of calls reached.');
-                                return;
-                            }
-                            if (countdown > 1) {
-                                countdown -= 1;
-                                countdownDisplay.textContent = `${countdown}s`;
-                            }
-                            if (countdown <= 1 && !
-                                isFetching) { // Only fetch next number if not already fetching
-                                fetchNextNumber();
-                            }
-                        }, 1000);
-                        resetCountdown();
-                        isRunning = true;
-                        nextNumberBtn.textContent = 'Pause';
+                    intervalId = setInterval(() => {
+                        if (totalCalls >= 75) {
+                            pauseCalling();
+                            alert('Maximum number of calls reached.');
+                            return;
+                        }
+                        if (countdown > 0) {
+                            countdown -= 1;
+                            countdownDisplay.textContent = `${countdown}s`;
+                        }
+                        if (countdown <= 0 && !
+                            isFetching) { // Only fetch next number if not already fetching
+                            fetchNextNumber();
+                        }
+                    }, 1000);
+                    isRunning = true;
+                    nextNumberBtn.textContent = 'Pause';
                     // };
                 }
             }
@@ -679,36 +678,23 @@
                         let callerLanguage = gameSetup.caller_language || 'amharic_female';
                         let audioPath = `/audios/${callerLanguage}/${data.number}.mp3`;
                         let audio = new Audio(audioPath);
-                        
-                        audio.preload = 'auto';
-
-                        audio.onended = () => {
-                            resetCountdown(); // Reset and start the countdown after the audio ends
-                            isFetching = false; // Reset flag after fetch completes
-                        };
+                        audio.preload = 'auto'; // Set preload immediately after creating the Audio instance
 
                         audio.play().catch(e => {
                             console.error('Error playing audio:', e);
-                            callerLanguage = 'amharic_female';
+                            // Handling the error by loading a fallback audio
+                            callerLanguage = 'amharic_female'; // Fallback to a default language
                             audioPath = `/audios/${callerLanguage}/${data.number}.mp3`;
                             audio = new Audio(audioPath);
-
-                            audio.preload = 'auto';
-
-                            audio.onended = () => {
-                                resetCountdown
-                                    (); // Reset and start the countdown after fallback audio ends
-                                isFetching = false; // Reset flag after fetch completes
-                            };
-
+                            audio.preload = 'auto'; // Ensure to set preload for the fallback audio too
                             audio.play().catch(error => {
                                 console.error('Error playing fallback audio:', error);
-                                isFetching = false; // Reset flag in case of error
                             });
                         });
-                    } else {
-                        isFetching = false; // Reset flag if there's no new number
                     }
+
+                    resetCountdown(); // Reset the countdown after fetching the number
+                    isFetching = false; // Reset flag after fetch completes
                 }
             }
 
