@@ -183,7 +183,7 @@
 
             <!-- Input Fields and Pattern Display -->
             <div class="w-1/3 pl-10">
-                <form method="POST" action="{{ route('branch.game-page') }}">
+                <form id="gameForm" method="POST" action="{{ route('branch.game-page') }}">
                     @csrf
 
 
@@ -230,8 +230,12 @@
                             <label for="call_speed" class="block mb-2 text-sm font-medium text-white">Call speed</label>
                             <select id="call_speed" name="call_speed"
                                 class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5">
-                                <option value="very_fast" {{ session('game_setup.call_speed') == 'very_fast' ? 'selected' : '' }}>Very Fast (3s)</option>
-                                <option value="fast" {{ session('game_setup.call_speed') == 'fast' ? 'selected' : '' }}>Fast (5s)</option>
+                                <option value="very_fast"
+                                    {{ session('game_setup.call_speed') == 'very_fast' ? 'selected' : '' }}>Very Fast
+                                    (3s)</option>
+                                <option value="fast"
+                                    {{ session('game_setup.call_speed') == 'fast' ? 'selected' : '' }}>Fast (5s)
+                                </option>
                                 <!-- Add more options as needed -->
                             </select>
                         </div>
@@ -311,6 +315,7 @@
             const announcementButton = document.getElementById('announcementButton');
             const announcementSound = new Audio('/audios/announcement.mp3');
             const createGameButton = document.getElementById('createGameButton'); // Now targeting by ID
+            const gameForm = document.getElementById('gameForm'); // Ensure your form has an ID
 
             announcementButton.addEventListener('click', function() {
                 announcementSound.play().catch(e => {
@@ -331,6 +336,14 @@
             function updateButtonState() {
                 createGameButton.disabled = selectedNumbers.length < 5;
             }
+            function disableButton() {
+                // console.log("Button clicked, form should submit now.");
+                createGameButton.disabled = true;
+                createGameButton.textContent = 'Creating Game...';
+                gameForm.submit();
+            }
+                createGameButton.addEventListener('click', disableButton);
+
             numberButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const cardId = this.dataset.cardId;
