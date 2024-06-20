@@ -212,6 +212,7 @@ class BranchController extends Controller
                 'profit' => $profit,
             ]);
 
+            $selectedNumbers = explode(',', $request->input('selected_numbers', ''));
             session(['selected_numbers' => $selectedNumbers]);
             session([
                 'gameId' => $game->id,
@@ -223,6 +224,18 @@ class BranchController extends Controller
                 ],
             ]);
             session()->forget('callHistory');
+            // dd($selectedNumbers);
+
+            // Store game data in session
+            session()->put('gameId', $game->id);
+            session()->put('winning_pattern', $request->input('winning_pattern') ?? []);
+            session()->put('selected_numbers', $request->input('selected_numbers') ?? []);
+            $callSpeedMapping = [
+                'very_fast' => 3000,
+                'fast' => 5000,
+            ];
+            $callSpeed = $callSpeedMapping[$request->input('call_speed')] ?? 5000;
+            session()->put('caller_speed', $callSpeed);
 
             return redirect()->route('bingo.index');
         }
