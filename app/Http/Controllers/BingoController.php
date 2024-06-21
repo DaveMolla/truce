@@ -81,31 +81,10 @@ class BingoController extends Controller
         $callHistory = Session::get('callHistory', []);
         $totalCalls = count($callHistory);
         $game = Game::find($gameId);
-
-        // Calculate profit based on total bet amount and user's cut off percentage
-        $user = Auth::user();
-        $cutOffPercent = $user->cut_off_percent ?? 0;
-        $profit = ($cutOffPercent / 100) * $game->total_bet_amount;
-
-        // Check if user has sufficient balance
-        if ($user->current_balance < $profit) {
-            return back()->withErrors([
-                'phone' => 'You do not have enough balance to end this game.',
-            ]);
-        }
-
-        // Update game with the calculated profit and status
         $game->update([
-            'total_calls' => $totalCalls,
+            'total_calls' => $totalCalls ?? '0',
             'status' => 'end',
-            'profit' => $profit,
         ]);
-
-        // Update user balance
-        $user->update([
-            'current_balance' => $user->current_balance - $profit,
-        ]);
-
         return redirect()->route('branch.dashboard');
     }
 

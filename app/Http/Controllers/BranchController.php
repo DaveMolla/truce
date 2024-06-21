@@ -196,22 +196,41 @@ class BranchController extends Controller
     {
         $user = Auth::user();
         if ($user->role === 'branch') {
+
             $selectedNumbers = explode(',', $request->input('selected_numbers'));
+
+            // $branch_user = User::where('role', 'branch', Auth::user()->id)->first();
+            $user = Auth::user();
+            $cutOffPercent = $user->cut_off_percent ?? 0;
             $totalBetAmount = $request->bet_amount * count($selectedNumbers);
 
-            // Initialize profit as zero
-            $profit = 0;
+            $profit = ($cutOffPercent / 100) * $totalBetAmount;
+            // dd($profit);
+            $user_balance = $user->current_balance;
 
+            if ($user->current_balance <= $profit) {
+                return back()->withErrors([
+                    'phone' => 'You do not have enough balance.',
+                ]);
+            }
+
+            // dd($request->all());
             $game = Game::create([
                 'branch_user_id' => $user->id,
                 'bet_amount' => $request->bet_amount,
+                // dd($user),
                 'total_players' => count($selectedNumbers),
                 'total_calls' => 0,
                 'status' => 'pending',
                 'total_bet_amount' => $totalBetAmount,
                 'profit' => $profit,
+                // dd($user)
+
             ]);
 
+            $user->update([
+                'current_balance' => $user_balance - $profit,
+            ]);
             $selectedNumbers = explode(',', $request->input('selected_numbers', ''));
             session(['selected_numbers' => $selectedNumbers]);
             session([
