@@ -114,7 +114,7 @@
                 <thead>
                     <tr>
                         <th class="px-4 py-2">Date</th>
-                        <th class="px-4 py-2">Branch Name</th>
+                        <th class="px-4 py-2">Branch Number</th>
                         <th class="px-4 py-2">Agent Assigned</th>
                         <th class="px-4 py-2">Total Games Played</th>
                         <th class="px-4 py-2">Current Balance</th>
@@ -125,7 +125,7 @@
                     @foreach ($branches as $branch)
                         <tr>
                             <td class="border px-4 py-2">{{ $date ?: "$startDate to $endDate" }}</td>
-                            <td class="border px-4 py-2">{{ $branch->user->name }}</td>
+                            <td class="border px-4 py-2">{{ $branch->user->phone }}</td>
                             <td class="border px-4 py-2">{{ $branch->agent->user->name ?? 'No Agent' }}</td>
                             <td class="border px-4 py-2">{{ $branch->totalGames }}</td>
                             <td class="border px-4 py-2">{{ $branch->user->current_balance ?? '0' }}</td>
@@ -139,7 +139,9 @@
                 </tbody>
             </table>
 
-
+            <div class="mt-4">
+                {{ $branches->links() }}
+            </div>
 
         </div>
     </div>

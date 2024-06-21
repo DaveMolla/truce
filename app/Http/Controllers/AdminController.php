@@ -13,6 +13,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
@@ -124,7 +125,14 @@ class AdminController extends Controller
         $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
         $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
 
-        $branches = Branch::with('agent')->paginate(10);
+        $branches = Branch::with([
+            'agent',
+            'game' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            }
+        ])
+            ->orderBy(DB::raw('(SELECT MAX(created_at) FROM games WHERE games.branch_user_id = branches.user_id)'), 'desc')
+            ->paginate(20);
         $totalProfitSum = 0;
         foreach ($branches as $branch) {
             $query = Game::where('branch_user_id', $branch->user->id);
@@ -150,7 +158,7 @@ class AdminController extends Controller
         $agents = User::where('role', 'agent')->paginate(10);
         $user = Auth::user();
         if ($user->role === 'admin') {
-            return view('admin.manage-agent-account', compact('agents','superAgents'));
+            return view('admin.manage-agent-account', compact('agents', 'superAgents'));
         }
 
         return redirect()->back();
