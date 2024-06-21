@@ -139,8 +139,7 @@ class AgentController extends Controller
                     $query->orderBy('created_at', 'desc');
                 }
             ])
-            ->orderBy(DB::raw('(SELECT MAX(created_at) FROM games WHERE games.branch_user_id = branches.user_id)'), 'desc')
-            ->paginate(20);
+            ->orderBy(DB::raw('(SELECT MAX(created_at) FROM games WHERE games.branch_user_id = branches.user_id)'), 'desc')->get();
         $totalProfitSum = 0;
         foreach ($branches as $branch) {
             $query = Game::where('branch_user_id', $branch->user->id);

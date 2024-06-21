@@ -113,6 +113,7 @@
             <table class="min-w-full table-auto">
                 <thead>
                     <tr>
+                        <th class="px-4 py-2">#</th>
                         <th class="px-4 py-2">Date</th>
                         <th class="px-4 py-2">Branch Number</th>
                         <th class="px-4 py-2">Agent Assigned</th>
@@ -122,8 +123,12 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $row = 1;
+                    @endphp
                     @foreach ($branches as $branch)
                         <tr>
+                            <td class="border px-4 py-2">{{ $row++ }}</td>
                             <td class="border px-4 py-2">{{ $date ?: "$startDate to $endDate" }}</td>
                             <td class="border px-4 py-2">{{ $branch->user->phone }}</td>
                             <td class="border px-4 py-2">{{ $branch->agent->user->name ?? 'No Agent' }}</td>
@@ -139,9 +144,9 @@
                 </tbody>
             </table>
 
-            <div class="mt-4">
+            {{-- <div class="mt-4">
                 {{ $branches->links() }}
-            </div>
+            </div> --}}
 
         </div>
     </div>
