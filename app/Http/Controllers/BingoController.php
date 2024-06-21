@@ -33,8 +33,9 @@ class BingoController extends Controller
 
         $game = Game::find($gameId);
         $totalBetAmount = $game->total_bet_amount;
-        $profit = $game->profit;
+        $cutOffPercent = $branchUser->cut_off_percent ?? 0;
 
+        $profit = ($cutOffPercent / 100) * $totalBetAmount;
         $winningAmount = $totalBetAmount - $profit;
 
         return view('bingo.index', compact('callHistory', 'totalCalls', 'currentCall', 'winningPatterns', 'gameId', 'numbersAvailable', 'winningAmount', 'win', 'branchUser', 'winningPattern'));
