@@ -67,6 +67,7 @@ Route::post('agent/logout', [AgentController::class, 'logout'])->name('agent.log
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     Route::get('agent/dashboard', [AgentController::class, 'dashboard'])->name('agent.dashboard');
     Route::get('/agent/branches', [AgentController::class, 'branches'])->name('agent.branches');
+    Route::get('/agent/branches-report', [AgentController::class, 'branchesReport'])->name('agent.branches-report');
     Route::post('/agent/branch/top-up', [AgentController::class, 'topUpBranch'])->name('agent.top-up-branch');
     Route::post('/agent/branch/withdraw', [AgentController::class, 'withdrawBranch'])->name('agent.withdraw-branch');
 });

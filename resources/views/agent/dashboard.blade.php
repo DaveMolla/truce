@@ -21,6 +21,9 @@
                     <li class="mb-4">
                         <a href="{{ route('agent.dashboard') }}" class="text-lg hover:text-gray-400">Branches</a>
                     </li>
+                    <li class="mb-4">
+                        <a href="{{ route('agent.branches-report') }}" class="text-lg hover:text-gray-400">Branches Report</a>
+                    </li>
                     {{-- <li class="mb-4">
                         <a href="{{ route('agent.branches') }}" class="text-lg hover:text-gray-400">Branches</a>
                     </li> --}}

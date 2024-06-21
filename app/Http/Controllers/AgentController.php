@@ -6,8 +6,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Agent;
 use App\Models\Branch;
+use App\Models\Game;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
@@ -120,6 +123,40 @@ class AgentController extends Controller
     //     $branches = Branch::all();
     //     return view('agent.branches', compact('branches'));
     // }
+
+    public function branchesReport(Request $request)
+    {
+        $agent = Agent::where('user_id', Auth::user()->id)->first();
+
+        $date = $request->input('selected_date');
+        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
+        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
+
+        $branches = Branch::where('agent_id', $agent->id)
+            ->with([
+                'agent',
+                'game' => function ($query) {
+                    $query->orderBy('created_at', 'desc');
+                }
+            ])
+            ->orderBy(DB::raw('(SELECT MAX(created_at) FROM games WHERE games.branch_user_id = branches.user_id)'), 'desc')
+            ->paginate(20);
+        $totalProfitSum = 0;
+        foreach ($branches as $branch) {
+            $query = Game::where('branch_user_id', $branch->user->id);
+
+            if ($date) {
+                $query->whereDate('created_at', $date);
+            } else {
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            }
+
+            $branch->totalGames = $query->count();
+            $branch->totalProfit = $query->sum('profit');
+            $totalProfitSum += $branch->totalProfit;
+        }
+        return view('agent.branches-report', compact('branches', 'date', 'totalProfitSum', 'startDate', 'endDate', 'agent'));
+    }
 
     public function topUpBranch(Request $request)
     {
