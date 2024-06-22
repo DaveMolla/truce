@@ -94,16 +94,24 @@ class BingoController extends Controller
         $cardId = $request->input('card_id');
         $selectedNumbers = session('selected_numbers', '');
 
+        $adjustedCardId = $request->input('card_id');
+        $cardId = $adjustedCardId - 99;
+        // $cardId = $request->input('card_id');
+        $selectedNumbers = session('selected_numbers', '');
+
         // \Log::info('Retrieved selected numbers:', ['selectedNumbers' => $selectedNumbers]);
 
         if (!is_array($selectedNumbers)) {
             $selectedNumbers = explode(',', $selectedNumbers);
         }
 
+
+        $newCardId = $cardId + 99;
+
         // \Log::info('After conversion, selected numbers:', ['selectedNumbers' => $selectedNumbers]);
 
         if (!in_array($cardId, $selectedNumbers)) {
-            return back()->with('error', "Card number {$cardId} is not registered for this game.");
+            return back()->with('error', "Card number {$newCardId} is not registered for this game.");
         }
 
         $card = BingoCard::find($cardId);
