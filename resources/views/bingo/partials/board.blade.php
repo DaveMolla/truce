@@ -385,16 +385,16 @@
                                             <thead>
                                                 <div class="message">
                                                     @if (session('has_won'))
-                                                    <p class="text-green-500">Card {{ session('card_id') + 99 }} ->
-                                                        ዘግቷል!</p>
-                                                    <audio id="success-audio" src="{{ asset('audios/win.mp3') }}"
-                                                        autoplay></audio>
-                                                @else
-                                                    <p class="text-red-500">Card {{ session('card_id') + 99}} -> አልዘጋም!
-                                                    </p>
-                                                    <audio id="fail-audio" src="{{ asset('audios/not-win.mp3') }}"
-                                                        autoplay></audio>
-                                                @endif
+                                                        <p class="text-green-500">Card {{ session('card_id') }} ->
+                                                            ዘግቷል!</p>
+                                                        <audio id="success-audio" src="{{ asset('audios/win.mp3') }}"
+                                                            autoplay></audio>
+                                                    @else
+                                                        <p class="text-red-500">Card {{ session('card_id') }} -> አልዘጋም!
+                                                        </p>
+                                                        <audio id="fail-audio" src="{{ asset('audios/not-win.mp3') }}"
+                                                            autoplay></audio>
+                                                    @endif
 
                                                 </div>
 

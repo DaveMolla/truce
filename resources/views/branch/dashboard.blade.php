@@ -175,7 +175,7 @@
                 <div class="number-grid mb-5">
                     @foreach ($bingoCards as $card)
                         <button type="button" class="number-button" data-card-id="{{ $card->id }}">
-                            {{ $card->id + 99}}
+                            {{ $card->id }}
                         </button>
                     @endforeach
                 </div>
