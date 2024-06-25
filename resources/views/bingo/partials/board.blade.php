@@ -554,6 +554,21 @@
                 }
             }
 
+            const callerLanguage = gameSetup.caller_language || 'amharic_female';
+            const audioFiles = [];
+            for (let number = 1; number <= 75; number++) {
+                let audioPath = `/audios/${callerLanguage}/${number}.mp3`;
+                let audio = new Audio(audioPath);
+                audio.preload = 'auto';
+                audioFiles.push(audio); // Store it if needed later
+            }
+
+            audioFiles.forEach(audio => {
+                audio.addEventListener('canplaythrough', () => {
+                    console.log(`Preloaded: ${audio.src}`);
+                });
+            });
+
 
             function shuffleActiveNumbers() {
                 // Reset the active class for all buttons at the start of each shuffle
