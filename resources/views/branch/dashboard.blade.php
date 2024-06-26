@@ -27,18 +27,25 @@
             gap: 0.1rem;
             height: 750px;
             width: 750px;
-            margin-right: 15px;
+            margin-left: 140px;
+            margin-right: 20px;
+            /* margin-top: -100px; */
         }
 
         .number-grid button {
             background-color: #333;
             color: white;
-            font-size: 1.5rem;
+            font-size: 2.5rem;
+            font-weight: bold;
             border: 1px solid #444;
             border-radius: 0.375rem;
-            padding: 0.5rem;
+            /* padding: 0.5rem; */
+            padding-left: 25px;
+            padding-right: 25px;
+            padding-top: 5px;
+            padding-bottom: 5px;
             transition: background-color 0.3s;
-            margin: 2px;
+            margin: 3px;
         }
 
         .number-grid button.selected {
@@ -169,8 +176,7 @@
             </nav>
         </div>
         <!-- Main content -->
-        <div class="p-10 w-full max-w-6xl mx-auto flex">
-            <!-- Number Grid (Bingo Cards) -->
+       <!-- Number Grid (Bingo Cards) -->
             <div class="w-2/3">
                 <div class="number-grid mb-5">
                     @foreach ($bingoCards as $card)
@@ -180,6 +186,8 @@
                     @endforeach
                 </div>
             </div>
+
+        <div class="p-10 w-full max-w-6xl mx-auto flex" style="margin-left: 280px;">
 
             <!-- Input Fields and Pattern Display -->
             <div class="w-1/3 pl-10">
