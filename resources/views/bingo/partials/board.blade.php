@@ -554,21 +554,39 @@
                 }
             }
 
-            const callerLanguage = gameSetup.caller_language || 'amharic_female';
-            const audioFiles = [];
-            for (let number = 1; number <= 75; number++) {
-                let audioPath = `/audios/${callerLanguage}/${number}.mp3`;
-                let audio = new Audio(audioPath);
-                audio.preload = 'auto';
-                audioFiles.push(audio); // Store it if needed later
+            ///////////////////////////////
+
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+                        console.log('ServiceWorker registration successful with scope: ',
+                            registration.scope);
+                    }, function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+                });
             }
 
-            audioFiles.forEach(audio => {
-                audio.addEventListener('canplaythrough', () => {
-                    console.log(`Preloaded: ${audio.src}`);
-                });
-            });
 
+            const callerLanguage = gameSetup.caller_language || 'amharic_female';
+            const urlsToCache = [];
+            for (let number = 1; number <= 75; number++) {
+                urlsToCache.push(`/audios/${callerLanguage}/${number}.mp3`);
+            }
+
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+                        console.log('ServiceWorker registration successful with scope: ',
+                            registration.scope);
+                        // Here you might want to pass urlsToCache to your service worker somehow,
+                        // or directly edit the service-worker.js file to include these URLs
+                    }, function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+                });
+            }
+            ////////////////////////
 
             function shuffleActiveNumbers() {
                 // Reset the active class for all buttons at the start of each shuffle
