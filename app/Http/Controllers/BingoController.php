@@ -61,13 +61,16 @@ class BingoController extends Controller
 
     private function getUniqueNumber($callHistory)
     {
-        $availableNumbers = array_diff(range(1, 75), $callHistory);
+        $totalNumbers = range(1, 75);
+        shuffle($totalNumbers); // Shuffle once and store it if possible
 
-        if (empty($availableNumbers)) {
-            return null;
+        foreach ($totalNumbers as $number) {
+            if (!in_array($number, $callHistory)) {
+                return $number;
+            }
         }
 
-        return $availableNumbers[array_rand($availableNumbers)];
+        return null; // All numbers are called
     }
 
     public function resetBoard()
@@ -75,7 +78,7 @@ class BingoController extends Controller
         Session::forget('callHistory');
         return redirect()->route('bingo.index');
     }
-     public function endGame(Request $request)
+    public function endGame(Request $request)
     {
         $gameId = Session::get('gameId');
         $callHistory = Session::get('callHistory', []);
