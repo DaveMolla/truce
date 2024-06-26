@@ -554,6 +554,30 @@
                 }
             }
 
+            //initialize to fetch number faster
+            
+            initializeBingoGameState();
+
+
+            function initializeBingoGameState() {
+                if (!localStorage.getItem('bingoCallHistory')) {
+                    let numbers = Array.from({
+                        length: 75
+                    }, (_, i) => i + 1);
+                    shuffleBingoArray(numbers); // Shuffle the numbers
+                    localStorage.setItem('bingoCallHistory', JSON.stringify(numbers));
+                    localStorage.setItem('bingoCurrentIndex', '0');
+                    console.log("Game initialized with shuffled numbers:", numbers);
+                } else {
+                    console.log("Game already initialized. Current stored numbers:", JSON.parse(localStorage
+                        .getItem('bingoCallHistory')));
+                }
+
+                // Log when all numbers are ready
+                console.log("All 75 numbers fetched in game start");
+            }
+
+
             ///////////////////////////////
 
             if ('serviceWorker' in navigator) {
