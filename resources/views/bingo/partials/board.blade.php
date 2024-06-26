@@ -674,11 +674,11 @@
                             alert('Maximum number of calls reached.');
                             return;
                         }
-                        if (countdown > 1) {
+                        if (countdown > 0) {
                             countdown -= 1;
                             countdownDisplay.textContent = `${countdown}s`;
                         }
-                        if (countdown <= 1 && !
+                        if (countdown <= 0 && !
                             isFetching) { // Only fetch next number if not already fetching
                             fetchNextNumber();
                         }
