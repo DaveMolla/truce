@@ -555,7 +555,7 @@
             }
 
             //initialize to fetch number faster
-            
+
             initializeBingoGameState();
 
 
@@ -576,6 +576,14 @@
                 // Log when all numbers are ready
                 console.log("All 75 numbers fetched in game start");
             }
+
+            function shuffleBingoArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+                }
+            }
+
 
 
             ///////////////////////////////
