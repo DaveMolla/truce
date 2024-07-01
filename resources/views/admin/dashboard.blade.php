@@ -138,7 +138,7 @@
                         </tr>
                     @endforeach
                     <tr>
-                        <td class="border px-4 py-2" colspan="5"><strong>Total</strong></td>
+                        <td class="border px-4 py-2" colspan="6"><strong>Total</strong></td>
                         <td class="border px-4 py-2"><strong>{{ $totalProfitSum }}</strong></td>
                     </tr>
                 </tbody>

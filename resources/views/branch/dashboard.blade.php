@@ -341,9 +341,9 @@
                 totalAmountInput.value = totalAmount; // Update the hidden input
             }
 
-            function updateButtonState() {
-                createGameButton.disabled = selectedNumbers.length < 5;
-            }
+            // function updateButtonState() {
+            //     createGameButton.disabled = selectedNumbers.length < 5;
+            // }
             function disableButton() {
                 // console.log("Button clicked, form should submit now.");
                 createGameButton.disabled = true;
@@ -365,13 +365,13 @@
                     selectedNumbersInput.value = selectedNumbers.join(',');
                     numberOfSelectedNumbersInput.value = selectedNumbers.length;
                     updateTotalAmount(); // Update total amount whenever selection changes
-                    updateButtonState(); // Update the state of the create game button
+                    // updateButtonState(); // Update the state of the create game button
                 });
             });
 
             betAmountInput.addEventListener('input', function() {
                 updateTotalAmount(); // Update total amount on bet amount change
-                updateButtonState(); // Also check button state on input change
+                // updateButtonState(); // Also check button state on input change
             });
             winningPatternSelect.addEventListener('change', function() {
                 const selectedOption = this.options[this.selectedIndex];
@@ -454,13 +454,13 @@
                 selectedNumbersInput.value = '';
                 numberOfSelectedNumbersInput.value = 0;
                 updateTotalAmount(); // Reset total amount
-                updateButtonState(); // Reset the state of the create game button
+                // updateButtonState(); // Reset the state of the create game button
             });
 
             // Trigger change event to load the default pattern on page load
             winningPatternSelect.dispatchEvent(new Event('change'));
             updateTotalAmount(); // Update total amount on page load
-            updateButtonState();
+            // updateButtonState();
 
         });
     </script>

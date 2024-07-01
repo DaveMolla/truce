@@ -69,7 +69,8 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th class="px-4 py-2">Date</th>
+                        <th class="px-4 py-2">Game Start</th>
+                        <th class="px-4 py-2">Game End</th>
                         <th class="px-4 py-2">Bet amount</th>
                         <th class="px-4 py-2">Total Players</th>
                         <th class="px-4 py-2">Total Calls</th>
@@ -86,6 +87,7 @@
                         <tr>
                             <td class="border px-4 py-2">{{ $rowNumber++ }}</td>
                             <td class="border px-4 py-2">{{ $game->created_at->setTimezone('Africa/Addis_Ababa')->format('l, F j, Y g:i A') }}</td>
+                            <td class="border px-4 py-2">{{ $game->updated_at->setTimezone('Africa/Addis_Ababa')->format('l, F j, Y g:i A') }}</td>
                             <td class="border px-4 py-2">{{ $game->bet_amount }}</td>
                             <td class="border px-4 py-2">{{ $game->total_players }}</td>
                             <td class="border px-4 py-2">{{ $game->total_calls }}</td>
