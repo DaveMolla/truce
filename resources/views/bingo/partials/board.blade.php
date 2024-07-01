@@ -556,26 +556,26 @@
 
             //initialize to fetch number faster
 
-            initializeBingoGameState();
+            // initializeBingoGameState();
 
 
-            function initializeBingoGameState() {
-                if (!localStorage.getItem('bingoCallHistory')) {
-                    let numbers = Array.from({
-                        length: 75
-                    }, (_, i) => i + 1);
-                    shuffleBingoArray(numbers); // Shuffle the numbers
-                    localStorage.setItem('bingoCallHistory', JSON.stringify(numbers));
-                    localStorage.setItem('bingoCurrentIndex', '0');
-                    console.log("Game initialized with shuffled numbers:", numbers);
-                } else {
-                    console.log("Game already initialized. Current stored numbers:", JSON.parse(localStorage
-                        .getItem('bingoCallHistory')));
-                }
+            // function initializeBingoGameState() {
+            //     if (!localStorage.getItem('bingoCallHistory')) {
+            //         let numbers = Array.from({
+            //             length: 75
+            //         }, (_, i) => i + 1);
+            //         shuffleBingoArray(numbers); // Shuffle the numbers
+            //         localStorage.setItem('bingoCallHistory', JSON.stringify(numbers));
+            //         localStorage.setItem('bingoCurrentIndex', '0');
+            //         console.log("Game initialized with shuffled numbers:", numbers);
+            //     } else {
+            //         console.log("Game already initialized. Current stored numbers:", JSON.parse(localStorage
+            //             .getItem('bingoCallHistory')));
+            //     }
 
-                // Log when all numbers are ready
-                console.log("All 75 numbers fetched in game start");
-            }
+            //     // Log when all numbers are ready
+            //     console.log("All 75 numbers fetched in game start");
+            // }
 
             function shuffleBingoArray(array) {
                 for (let i = array.length - 1; i > 0; i--) {
@@ -588,36 +588,36 @@
 
             ///////////////////////////////
 
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-                        console.log('ServiceWorker registration successful with scope: ',
-                            registration.scope);
-                    }, function(err) {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-                });
-            }
+            // if ('serviceWorker' in navigator) {
+            //     window.addEventListener('load', function() {
+            //         navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+            //             console.log('ServiceWorker registration successful with scope: ',
+            //                 registration.scope);
+            //         }, function(err) {
+            //             console.log('ServiceWorker registration failed: ', err);
+            //         });
+            //     });
+            // }
 
 
-            const callerLanguage = gameSetup.caller_language || 'amharic_female';
-            const urlsToCache = [];
-            for (let number = 1; number <= 75; number++) {
-                urlsToCache.push(`/audios/${callerLanguage}/${number}.mp3`);
-            }
+            // const callerLanguage = gameSetup.caller_language || 'amharic_female';
+            // const urlsToCache = [];
+            // for (let number = 1; number <= 75; number++) {
+            //     urlsToCache.push(`/audios/${callerLanguage}/${number}.mp3`);
+            // }
 
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-                        console.log('ServiceWorker registration successful with scope: ',
-                            registration.scope);
-                        // Here you might want to pass urlsToCache to your service worker somehow,
-                        // or directly edit the service-worker.js file to include these URLs
-                    }, function(err) {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-                });
-            }
+            // if ('serviceWorker' in navigator) {
+            //     window.addEventListener('load', function() {
+            //         navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+            //             console.log('ServiceWorker registration successful with scope: ',
+            //                 registration.scope);
+            //             // Here you might want to pass urlsToCache to your service worker somehow,
+            //             // or directly edit the service-worker.js file to include these URLs
+            //         }, function(err) {
+            //             console.log('ServiceWorker registration failed: ', err);
+            //         });
+            //     });
+            // }
             ////////////////////////
 
             function shuffleActiveNumbers() {
